@@ -1,9 +1,12 @@
 package com.kelompoklima.cinemape;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -11,10 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.kelompoklima.cinemape.databinding.FragmentHomeBinding;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private MovieAdapter adapter;
+    private List<Movie> allMovies = new ArrayList<>();
 
     @Nullable
     @Override
@@ -27,17 +33,58 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Dummy Data for Suggested Movies
-        List<Movie> suggestedMovies = new ArrayList<>();
-        suggestedMovies.add(new Movie("The Shawshank Redemption", "Two imprisoned men bond over a number of years."));
-        suggestedMovies.add(new Movie("The Godfather", "The aging patriarch of an organized crime dynasty."));
-        suggestedMovies.add(new Movie("The Dark Knight", "When the menace known as the Joker wreaks havoc."));
-        suggestedMovies.add(new Movie("Inception", "A thief who steals corporate secrets through the use of dream-sharing technology."));
-        suggestedMovies.add(new Movie("Interstellar", "A team of explorers travel through a wormhole in space."));
-
-        MovieAdapter adapter = new MovieAdapter(suggestedMovies);
+        // 1. Inisialisasi RecyclerView & Adapter
+        adapter = new MovieAdapter();
         binding.rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvMovies.setAdapter(adapter);
+
+        // 2. Logika Pencarian (Search Bar)
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterMovies(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // 3. Ambil data dari API
+        fetchMovies();
+    }
+
+    private void fetchMovies() {
+        ApiService.getAllMovie(new ApiService.ApiCallback<List<Movie>>() {
+            @Override
+            public void onSuccess(List<Movie> result) {
+                // Pastikan fragment masih menempel pada activity sebelum update UI
+                if (isAdded()) {
+                    allMovies = result;
+                    adapter.setMovieList(result);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void filterMovies(String query) {
+        if (allMovies == null) return;
+
+        List<Movie> filteredList = allMovies.stream()
+                .filter(movie -> movie.getJudul() != null && 
+                        movie.getJudul().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+
+        adapter.setMovieList(filteredList);
     }
 
     @Override

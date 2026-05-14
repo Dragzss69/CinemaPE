@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.fuel)
     implementation(libs.fuel.android)
     implementation(libs.fragment)
+    implementation("com.google.code.gson:gson:2.14.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

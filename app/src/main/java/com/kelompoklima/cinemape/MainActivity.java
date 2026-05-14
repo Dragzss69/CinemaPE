@@ -1,6 +1,7 @@
 package com.kelompoklima.cinemape;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,15 +20,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set Toolbar sebagai ActionBar
         setSupportActionBar(binding.toolbar);
 
-        // Load fragment pertama kali (Home)
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
         }
 
-        // Listener untuk navigasi bawah
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -36,10 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (itemId == R.id.navigation_home) {
                     fragment = new HomeFragment();
-                } else if (itemId == R.id.navigation_search) {
-                    fragment = new SearchFragment();
-                } else if (itemId == R.id.navigation_profile) {
-                    fragment = new ProfileFragment();
+                } else if (itemId == R.id.navigation_saved) {
+                    fragment = new SavedFragment();
                 }
 
                 if (fragment != null) {
@@ -49,6 +45,22 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_profile) {
+            ProfileDialogFragment dialog = new ProfileDialogFragment();
+            dialog.show(getSupportFragmentManager(), "ProfileDialog");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadFragment(Fragment fragment) {

@@ -6,14 +6,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<Movie> movieList;
+    private List<Movie> movieList = new ArrayList<>();
+
+    public MovieAdapter() {
+    }
 
     public MovieAdapter(List<Movie> movieList) {
         this.movieList = movieList;
+    }
+
+    public void setMovieList(List<Movie> movieList) {
+        this.movieList = movieList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -26,8 +35,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
-        holder.tvTitle.setText(movie.getTitle());
-        holder.tvDescription.setText(movie.getDescription());
+        holder.tvTitle.setText(movie.getJudul());
+        holder.tvDescription.setText(movie.getRingkasan());
     }
 
     @Override

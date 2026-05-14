@@ -8,18 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.kelompoklima.cinemape.databinding.FragmentProfileBinding;
+import com.kelompoklima.cinemape.databinding.FragmentSavedBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileFragment extends Fragment {
+public class SavedFragment extends Fragment {
 
-    private FragmentProfileBinding binding;
+    private FragmentSavedBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        binding = FragmentSavedBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -27,15 +27,14 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Dummy Data untuk Riwayat Film
-        List<Movie> historyMovies = new ArrayList<>();
-        historyMovies.add(new Movie("Avengers: Endgame", "Watched on 20 Oct 2023"));
-        historyMovies.add(new Movie("Parasite", "Watched on 15 Oct 2023"));
-        historyMovies.add(new Movie("Joker", "Watched on 10 Oct 2023"));
+        // Dummy Data for Saved Movies
+        List<Movie> savedMovies = new ArrayList<>();
+        savedMovies.add(new Movie("The Godfather", "The aging patriarch of an organized crime dynasty."));
+        savedMovies.add(new Movie("Interstellar", "A team of explorers travel through a wormhole in space."));
 
-        MovieAdapter adapter = new MovieAdapter(historyMovies);
-        binding.rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rvHistory.setAdapter(adapter);
+        MovieAdapter adapter = new MovieAdapter(savedMovies);
+        binding.rvSavedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvSavedMovies.setAdapter(adapter);
     }
 
     @Override
