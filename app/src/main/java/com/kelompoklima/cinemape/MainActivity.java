@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (itemId == R.id.navigation_home) {
                     fragment = new HomeFragment();
+                } else if (itemId == R.id.navigation_add) {
+                    fragment = new AddMovieFragment();
                 } else if (itemId == R.id.navigation_saved) {
                     fragment = new SavedFragment();
                 }
