@@ -3,11 +3,16 @@ package com.kelompoklima.cinemape;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
@@ -37,6 +42,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         Movie movie = movieList.get(position);
         holder.tvTitle.setText(movie.getJudul());
         holder.tvDescription.setText(movie.getRingkasan());
+        holder.tvRating.setText("⭐ " + movie.getSkorRating());
+        holder.tvCategory.setText(movie.getKategori());
+
+        // Format tanggal rilis
+        if (movie.getTanggalRilis() > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            String formattedDate = sdf.format(new Date(movie.getTanggalRilis() * 1000L)); // Asumsi timestamp dalam detik
+            holder.tvReleaseDate.setText("Rilis: " + formattedDate);
+            holder.tvReleaseDate.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvReleaseDate.setVisibility(View.GONE);
+        }
+
+        Glide.with(holder.itemView.getContext())
+                .load(movie.getGambarPoster())
+                .placeholder(android.R.drawable.progress_horizontal)
+                .error(android.R.drawable.stat_notify_error)
+                .into(holder.ivPoster);
     }
 
     @Override
@@ -45,12 +68,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     static class MovieViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDescription;
+        TextView tvTitle, tvDescription, tvRating, tvCategory, tvReleaseDate;
+        ImageView ivPoster;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_movie_title);
             tvDescription = itemView.findViewById(R.id.tv_movie_description);
+            tvRating = itemView.findViewById(R.id.tv_movie_rating);
+            tvCategory = itemView.findViewById(R.id.tv_movie_category);
+            tvReleaseDate = itemView.findViewById(R.id.tv_movie_release_date);
+            ivPoster = itemView.findViewById(R.id.iv_movie_poster);
         }
     }
 }

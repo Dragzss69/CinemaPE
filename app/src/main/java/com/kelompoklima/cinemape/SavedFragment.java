@@ -27,10 +27,8 @@ public class SavedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Dummy Data for Saved Movies
+        // Inisialisasi list kosong (data dummy dihapus)
         List<Movie> savedMovies = new ArrayList<>();
-        savedMovies.add(new Movie("The Godfather", "The aging patriarch of an organized crime dynasty."));
-        savedMovies.add(new Movie("Interstellar", "A team of explorers travel through a wormhole in space."));
 
         MovieAdapter adapter = new MovieAdapter(savedMovies);
         binding.rvSavedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
