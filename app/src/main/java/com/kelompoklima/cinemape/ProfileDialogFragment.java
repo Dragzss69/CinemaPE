@@ -1,6 +1,6 @@
 package com.kelompoklima.cinemape;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +14,7 @@ import com.kelompoklima.cinemape.databinding.LayoutProfileDialogBinding;
 public class ProfileDialogFragment extends DialogFragment {
 
     private LayoutProfileDialogBinding binding;
+    private SessionManager sessionManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,14 +34,28 @@ public class ProfileDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.btnSettings.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Settings Clicked", Toast.LENGTH_SHORT).show();
-            dismiss();
-        });
+        sessionManager = new SessionManager(requireContext());
+
+        // Menampilkan email yang sedang login
+        String email = sessionManager.getEmail();
+        if (email != null) {
+            binding.tvUserEmail.setText(email);
+        }
 
         binding.btnLogout.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Logged Out", Toast.LENGTH_SHORT).show();
+            // Proses Logout
+            sessionManager.logout();
+            Toast.makeText(getContext(), "Berhasil Logout: " + email, Toast.LENGTH_SHORT).show();
+            
+            // Pindah ke LoginActivity dan tutup semua activity sebelumnya
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            
             dismiss();
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         });
     }
 

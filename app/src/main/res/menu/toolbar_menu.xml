@@ -5,9 +5,5 @@
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_profile"
         android:title="Profile"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_logout"
-        android:title="Logout"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>
