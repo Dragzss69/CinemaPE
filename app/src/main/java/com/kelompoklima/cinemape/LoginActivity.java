@@ -42,20 +42,17 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            ApiService.login(email, password, new ApiService.ApiCallback<User>() {
-                @Override
-                public void onSuccess(User user) {
-                    sessionManager.createLoginSession(user);
-                    Toast.makeText(LoginActivity.this, "Selamat datang, " + user.getUsername(), Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            });
+            // Cek Login di Lokal (SessionManager)
+            if (sessionManager.checkLogin(email, password)) {
+                // Login Berhasil
+                sessionManager.createLoginSession(email);
+                Toast.makeText(LoginActivity.this, "Selamat datang kembali!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            } else {
+                // Login Gagal
+                Toast.makeText(LoginActivity.this, "Email atau password salah / belum terdaftar", Toast.LENGTH_SHORT).show();
+            }
         });
 
         tvToRegister.setOnClickListener(v -> {
