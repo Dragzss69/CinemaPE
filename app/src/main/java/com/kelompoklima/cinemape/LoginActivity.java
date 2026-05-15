@@ -1,0 +1,65 @@
+package com.kelompoklima.cinemape;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputEditText;
+
+public class LoginActivity extends AppCompatActivity {
+
+    private TextInputEditText edtEmail, edtPassword;
+    private Button btnLogin;
+    private TextView tvToRegister;
+    private SessionManager sessionManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        sessionManager = new SessionManager(this);
+
+        // Jika sudah login, langsung ke MainActivity
+        if (sessionManager.isLoggedIn()) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+
+        edtEmail = findViewById(R.id.edtEmail);
+        edtPassword = findViewById(R.id.edtPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        tvToRegister = findViewById(R.id.tvToRegister);
+
+        btnLogin.setOnClickListener(v -> {
+            String email = edtEmail.getText().toString();
+            String password = edtPassword.getText().toString();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Email dan password harus diisi", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ApiService.login(email, password, new ApiService.ApiCallback<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    sessionManager.createLoginSession(user);
+                    Toast.makeText(LoginActivity.this, "Selamat datang, " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        tvToRegister.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
+    }
+}

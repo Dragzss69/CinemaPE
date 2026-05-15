@@ -10,19 +10,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Daftar Akun Baru"
+        android:text="@string/register_title"
         android:textSize="28sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp"/>
 
-    <!-- Input Username -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="@string/hint_username"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="16dp">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtRegUsername"
             android:layout_width="match_parent"
@@ -30,13 +30,13 @@
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Input Email -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/hint_email"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="16dp">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtRegEmail"
             android:layout_width="match_parent"
@@ -44,14 +44,14 @@
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Input Password -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/hint_password"
         app:passwordToggleEnabled="true"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="24dp">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtRegPassword"
             android:layout_width="match_parent"
@@ -63,14 +63,15 @@
         android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Daftar Sekarang"
+        android:text="@string/btn_register"
+        android:textSize="16sp"
         android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/tvToLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sudah punya akun? Login di sini"
+        android:text="@string/to_login"
         android:layout_gravity="center_horizontal"
         android:textColor="?attr/colorPrimary"/>
 

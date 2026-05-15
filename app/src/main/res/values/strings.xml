@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">CinemaPE</string>
+
+    <!-- Login & Register Strings -->
+    <string name="login_title">Login CinemaPE</string>
+    <string name="register_title">Daftar Akun Baru</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_username">Username</string>
+    <string name="btn_login">Masuk</string>
+    <string name="btn_register">Daftar</string>
+    <string name="to_register">Belum punya akun? Daftar di sini</string>
+    <string name="to_login">Sudah punya akun? Login di sini</string>
+
+    <!-- Messages -->
+    <string name="msg_login_failed">Email atau password salah</string>
+    <string name="msg_empty_fields">Email dan password harus diisi</string>
+    <string name="msg_reg_success">Pendaftaran berhasil, silakan login</string>
 </resources>

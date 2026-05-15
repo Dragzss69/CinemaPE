@@ -1,5 +1,6 @@
 package com.kelompoklima.cinemape;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,10 +14,22 @@ import com.kelompoklima.cinemape.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 1. Cek Sesi Login di awal
+        sessionManager = new SessionManager(this);
+        if (!sessionManager.isLoggedIn()) {
+            // Jika belum login, lempar ke LoginActivity dan tutup MainActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return; // Hentikan eksekusi kode di bawahnya
+        }
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
