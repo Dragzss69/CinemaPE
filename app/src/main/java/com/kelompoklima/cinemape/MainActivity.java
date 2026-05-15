@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -70,11 +71,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_profile) {
+        int itemId = item.getItemId();
+        
+        if (itemId == R.id.action_profile) {
             ProfileDialogFragment dialog = new ProfileDialogFragment();
             dialog.show(getSupportFragmentManager(), "ProfileDialog");
             return true;
+        } else if (itemId == R.id.action_logout) {
+            // Proses Logout
+            sessionManager.logout();
+            Toast.makeText(this, "Berhasil Logout", Toast.LENGTH_SHORT).show();
+            
+            // Pindah ke LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
