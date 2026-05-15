@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             } else {
                 // Login Gagal
-                Toast.makeText(LoginActivity.this, "Email atau password salah / belum terdaftar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "EMAIL ATAU PASSWORD SALAH / BELUM TERDAFTAR", Toast.LENGTH_SHORT).show();
             }
         });
 
