@@ -6,7 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import com.kelompoklima.cinemape.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,14 +30,11 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) loadFragment(new HomeFragment());
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            Fragment fragment = null;
             int id = item.getItemId();
-            if (id == R.id.navigation_home) fragment = new HomeFragment();
-            else if (id == R.id.navigation_add) fragment = new AddMovieFragment();
-            else if (id == R.id.navigation_saved) fragment = new SavedFragment();
-            
-            if (fragment != null) loadFragment(fragment);
-            return fragment != null;
+            if (id == R.id.navigation_home) loadFragment(new HomeFragment());
+            else if (id == R.id.navigation_add) loadFragment(new AddMovieFragment());
+            else if (id == R.id.navigation_saved) loadFragment(new SavedFragment());
+            return true;
         });
     }
 
@@ -57,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(androidx.fragment.app.Fragment fragment) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
 }
