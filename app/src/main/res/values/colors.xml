@@ -5,6 +5,7 @@
 
     <!-- Tema Orange Hitam -->
     <color name="orange_primary">#FF8C00</color>
+    <color name="orange_primary_variant">#FF7000</color>
     <color name="orange_accent">#FFA500</color>
     <color name="black_bg_dark">#0C0C0C</color>
     <color name="black_card_dark">#1A1A1A</color>
