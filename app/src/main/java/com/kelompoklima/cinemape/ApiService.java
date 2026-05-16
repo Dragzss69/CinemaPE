@@ -14,10 +14,10 @@ import java.util.Map;
 
 public class ApiService {
     // MockAPI URL format: https://<api-id>.mockapi.io/<resource>
-    // Based on the fields in Movie.java (judul, ringkasan), the resource is likely "film"
     private static final String BASE_URL = "https://68ff8dfbe02b16d1753e765d.mockapi.io/";
     private static final String RESOURCE = "film";
-    private static final String USER_RESOURCE = "users"; // Ini untuk Authentikasi
+    private static final String USER_RESOURCE = "users";
+    private static final String SAVED_RESOURCE = "saved_movies";
     private static final Gson gson = new Gson();
 
     public interface ApiCallback<T> {
@@ -69,17 +69,48 @@ public class ApiService {
                 });
     }
 
-    public static void updateMovie(String id, Movie movieUpdate, ApiCallback<Movie> callback) {
-        String jsonBody = gson.toJson(movieUpdate);
+    // --- Bagian Saved Movie ---
 
-        Fuel.INSTANCE.put(BASE_URL + RESOURCE + "/" + id, null)
+    public static void saveMovie(Movie movie, String userId, ApiCallback<Movie> callback) {
+        // Simpan movie dengan menandai siapa pemiliknya
+        movie.setUserId(userId);
+        
+        // Simpan ID asli sebelum dikosongkan untuk MockAPI generate ID baru
+        String originalId = movie.getId();
+        movie.setId(null); 
+        
+        String jsonBody = gson.toJson(movie);
+
+        Fuel.INSTANCE.post(BASE_URL + SAVED_RESOURCE, null)
                 .body(jsonBody, StandardCharsets.UTF_8)
                 .header(Map.of("Content-Type", "application/json"))
                 .responseString(new Handler<String>() {
                     @Override
                     public void success(String response) {
                         Movie result = gson.fromJson(response, Movie.class);
+                        movie.setId(originalId); // Kembalikan ID asli
                         callback.onSuccess(result);
+                    }
+                    @Override
+                    public void failure(FuelError error) {
+                        movie.setId(originalId);
+                        callback.onError(error.getMessage());
+                    }
+                });
+    }
+
+    public static void getSavedMovies(String userId, ApiCallback<List<Movie>> callback) {
+        Fuel.INSTANCE.get(BASE_URL + SAVED_RESOURCE + "?userId=" + userId, null)
+                .responseString(new Handler<String>() {
+                    @Override
+                    public void success(String response) {
+                        try {
+                            List<Movie> list = gson.fromJson(response,
+                                    new TypeToken<ArrayList<Movie>>(){}.getType());
+                            callback.onSuccess(list);
+                        } catch (Exception e) {
+                            callback.onError("Gagal memproses data: " + e.getMessage());
+                        }
                     }
                     @Override
                     public void failure(FuelError error) {
@@ -88,20 +119,7 @@ public class ApiService {
                 });
     }
 
-    public static void deleteMovie(String id, ApiCallback<String> callback) {
-        Fuel.INSTANCE.delete(BASE_URL + RESOURCE + "/" + id, null).responseString(new Handler<String>() {
-            @Override
-            public void success(String response) {
-                callback.onSuccess("Data berhasil dihapus");
-            }
-            @Override
-            public void failure(FuelError error) {
-                callback.onError(error.getMessage());
-            }
-        });
-    }
-
-    // --- Disini Bagian Authentikasi ---
+    // --- Bagian Authentikasi ---
 
     public static void register(User user, ApiCallback<User> callback) {
         String jsonBody = gson.toJson(user);
@@ -122,7 +140,6 @@ public class ApiService {
     }
 
     public static void login(String email, String password, ApiCallback<User> callback) {
-        // Simulasi login: Cari user berdasarkan email di MockAPI
         Fuel.INSTANCE.get(BASE_URL + USER_RESOURCE + "?email=" + email, null)
                 .responseString(new Handler<String>() {
                     @Override

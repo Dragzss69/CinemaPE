@@ -17,12 +17,21 @@ import java.util.Locale;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movieList = new ArrayList<>();
+    private OnSaveClickListener onSaveClickListener;
+
+    public interface OnSaveClickListener {
+        void onSaveClick(Movie movie);
+    }
 
     public MovieAdapter() {
     }
 
     public MovieAdapter(List<Movie> movieList) {
         this.movieList = movieList;
+    }
+
+    public void setOnSaveClickListener(OnSaveClickListener listener) {
+        this.onSaveClickListener = listener;
     }
 
     public void setMovieList(List<Movie> movieList) {
@@ -60,6 +69,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 .placeholder(android.R.drawable.progress_horizontal)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.ivPoster);
+
+        holder.ivSaveMovie.setOnClickListener(v -> {
+            if (onSaveClickListener != null) {
+                onSaveClickListener.onSaveClick(movie);
+            }
+        });
     }
 
     @Override
@@ -69,7 +84,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     static class MovieViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDescription, tvRating, tvCategory, tvReleaseDate;
-        ImageView ivPoster;
+        ImageView ivPoster, ivSaveMovie;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +94,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             tvCategory = itemView.findViewById(R.id.tv_movie_category);
             tvReleaseDate = itemView.findViewById(R.id.tv_movie_release_date);
             ivPoster = itemView.findViewById(R.id.iv_movie_poster);
+            ivSaveMovie = itemView.findViewById(R.id.iv_save_movie);
         }
     }
 }
