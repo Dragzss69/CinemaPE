@@ -2,6 +2,12 @@ package com.kelompoklima.cinemape;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SessionManager {
     private SharedPreferences sharedPreferences;
@@ -11,6 +17,7 @@ public class SessionManager {
     private static final String IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_LOGGED_IN_EMAIL = "loggedInEmail";
+    private static final String KEY_SAVED_MOVIES = "saved_movies_local";
 
     // Key untuk data registrasi (Simulasi)
     private static final String KEY_REGISTERED_ID = "reg_id";
@@ -47,7 +54,6 @@ public class SessionManager {
     }
 
     public String getUserId() {
-        // Mengambil ID user yang sedang login
         return sharedPreferences.getString(KEY_USER_ID, null);
     }
     
@@ -57,6 +63,64 @@ public class SessionManager {
 
     public String getEmail() {
         return sharedPreferences.getString(KEY_LOGGED_IN_EMAIL, null);
+    }
+
+    // --- Manajemen Favorite Movies (Lokal) ---
+
+    /**
+     * Menambah atau menghapus film dari daftar favorit (Toggle)
+     * @return true jika film sekarang tersimpan, false jika dihapus
+     */
+    public boolean toggleMovieLocally(Movie movie) {
+        List<Movie> savedList = getSavedMoviesLocally();
+        boolean exists = false;
+        
+        Iterator<Movie> iterator = savedList.iterator();
+        while (iterator.hasNext()) {
+            Movie m = iterator.next();
+            if (m.getJudul() != null && m.getJudul().equals(movie.getJudul())) {
+                iterator.remove();
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) {
+            savedList.add(movie);
+        }
+
+        String json = new Gson().toJson(savedList);
+        editor.putString(KEY_SAVED_MOVIES, json);
+        editor.apply();
+        
+        return !exists;
+    }
+
+    public void saveMovieLocally(Movie movie) {
+        List<Movie> savedList = getSavedMoviesLocally();
+        
+        boolean exists = false;
+        for (Movie m : savedList) {
+            if (m.getJudul() != null && m.getJudul().equals(movie.getJudul())) {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) {
+            savedList.add(movie);
+            String json = new Gson().toJson(savedList);
+            editor.putString(KEY_SAVED_MOVIES, json);
+            editor.apply();
+        }
+    }
+
+    public List<Movie> getSavedMoviesLocally() {
+        String json = sharedPreferences.getString(KEY_SAVED_MOVIES, null);
+        if (json == null) return new ArrayList<>();
+        
+        Type type = new TypeToken<ArrayList<Movie>>() {}.getType();
+        return new Gson().fromJson(json, type);
     }
 
     public void logout() {

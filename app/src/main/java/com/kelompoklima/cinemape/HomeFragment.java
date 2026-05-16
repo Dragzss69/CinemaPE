@@ -21,6 +21,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private MovieAdapter adapter;
     private List<Movie> allMovies = new ArrayList<>();
+    private SessionManager sessionManager;
 
     @Nullable
     @Override
@@ -33,10 +34,18 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sessionManager = new SessionManager(requireContext());
+
         // 1. Inisialisasi RecyclerView & Adapter
         adapter = new MovieAdapter();
         binding.rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvMovies.setAdapter(adapter);
+
+        // Set listener untuk tombol save (Lokal)
+        adapter.setOnSaveClickListener(movie -> {
+            sessionManager.saveMovieLocally(movie);
+            Toast.makeText(getContext(), "Movie disimpan ke favorit!", Toast.LENGTH_SHORT).show();
+        });
 
         // 2. Logika Pencarian (Search Bar)
         binding.etSearch.addTextChangedListener(new TextWatcher() {
@@ -60,7 +69,6 @@ public class HomeFragment extends Fragment {
         ApiService.getAllMovie(new ApiService.ApiCallback<List<Movie>>() {
             @Override
             public void onSuccess(List<Movie> result) {
-                // Pastikan fragment masih menempel pada activity sebelum update UI
                 if (isAdded()) {
                     allMovies = result;
                     adapter.setMovieList(result);

@@ -96,6 +96,12 @@ public class AddMovieFragment extends Fragment {
         adapter = new MovieAdapter();
         binding.rvAddedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvAddedMovies.setAdapter(adapter);
+
+        // Set listener untuk tombol save (Lokal)
+        adapter.setOnSaveClickListener(movie -> {
+            sessionManager.saveMovieLocally(movie);
+            Toast.makeText(getContext(), "Movie disimpan ke favorit!", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void fetchMyMovies() {
