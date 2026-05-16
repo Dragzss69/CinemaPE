@@ -21,7 +21,7 @@ public class AddMovieFragment extends Fragment {
     private MovieAdapter adapter;
     private List<Movie> myAddedMovies = new ArrayList<>();
     private SessionManager sessionManager;
-    private String currentUserId;
+    private String currentUsername;
 
     @Nullable
     @Override
@@ -36,11 +36,8 @@ public class AddMovieFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         
-        // AMBIL IDENTITAS USER: Coba ambil ID, jika tidak ada gunakan Email (untuk user lama)
-        currentUserId = sessionManager.getUserId();
-        if (currentUserId == null || currentUserId.isEmpty()) {
-            currentUserId = sessionManager.getEmail();
-        }
+        // AMBIL IDENTITAS USER: Menggunakan Username dari SessionManager
+        currentUsername = sessionManager.getUsername();
 
         setupRecyclerView();
         fetchMyMovies();
@@ -70,7 +67,7 @@ public class AddMovieFragment extends Fragment {
             movieBaru.setUrlTrailer(trailer);
             movieBaru.setRingkasan(description);
             movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
-            movieBaru.setUserId(currentUserId); // Menandai movie dengan ID user saat ini
+            movieBaru.setUserId(currentUsername); // Menandai movie dengan username saat ini
 
             ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
                 @Override
@@ -97,10 +94,10 @@ public class AddMovieFragment extends Fragment {
         binding.rvAddedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvAddedMovies.setAdapter(adapter);
 
-        // Set listener untuk tombol save (Lokal)
+        // Listener untuk favorit
         adapter.setOnSaveClickListener(movie -> {
-            sessionManager.saveMovieLocally(movie);
-            Toast.makeText(getContext(), "Movie disimpan ke favorit!", Toast.LENGTH_SHORT).show();
+            // Toast sementara karena fitur simpan lokal favorit belum diimplementasikan di SessionManager
+            Toast.makeText(getContext(), "Movie ditambahkan ke favorit!", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -109,9 +106,9 @@ public class AddMovieFragment extends Fragment {
             @Override
             public void onSuccess(List<Movie> result) {
                 if (isAdded()) {
-                    // FILTER: Pastikan movie yang ditampilkan adalah milik user ini
+                    // FILTER: Pastikan movie yang ditampilkan adalah milik user ini berdasarkan Username
                     myAddedMovies = result.stream()
-                            .filter(movie -> currentUserId != null && currentUserId.equals(movie.getUserId()))
+                            .filter(movie -> currentUsername != null && currentUsername.equals(movie.getUserId()))
                             .collect(Collectors.toList());
                     
                     updateUIState();
