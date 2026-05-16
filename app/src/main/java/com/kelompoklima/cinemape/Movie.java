@@ -30,6 +30,9 @@ public class Movie {
     @SerializedName("url_trailer")
     private String urlTrailer;
 
+    @SerializedName("userId")
+    private String userId;
+
     public Movie() {
     }
 
@@ -66,4 +69,7 @@ public class Movie {
 
     public String getUrlTrailer() { return urlTrailer; }
     public void setUrlTrailer(String urlTrailer) { this.urlTrailer = urlTrailer; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 }

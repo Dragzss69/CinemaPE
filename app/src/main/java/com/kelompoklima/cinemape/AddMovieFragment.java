@@ -1,6 +1,7 @@
 package com.kelompoklima.cinemape;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.kelompoklima.cinemape.databinding.FragmentAddMovieBinding;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AddMovieFragment extends Fragment {
 
     private FragmentAddMovieBinding binding;
     private MovieAdapter adapter;
-    private List<Movie> addedMovies = new ArrayList<>();
+    private List<Movie> myAddedMovies = new ArrayList<>();
+    private SessionManager sessionManager;
+    private String currentUserId;
 
     @Nullable
     @Override
@@ -30,16 +34,19 @@ public class AddMovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sessionManager = new SessionManager(requireContext());
+        
+        // AMBIL IDENTITAS USER: Coba ambil ID, jika tidak ada gunakan Email (untuk user lama)
+        currentUserId = sessionManager.getUserId();
+        if (currentUserId == null || currentUserId.isEmpty()) {
+            currentUserId = sessionManager.getEmail();
+        }
+
         setupRecyclerView();
-        fetchMovies();
+        fetchMyMovies();
 
-        // Klik ikon plus di empty state -> Buka Form
         binding.ivAddPlaceholder.setOnClickListener(v -> showForm());
-
-        // Klik FAB -> Buka Form
         binding.fabAddMovie.setOnClickListener(v -> showForm());
-
-        // Klik Batal -> Kembali ke List/Empty State
         binding.btnCancelAdd.setOnClickListener(v -> hideForm());
 
         binding.btnSaveMovie.setOnClickListener(v -> {
@@ -50,7 +57,7 @@ public class AddMovieFragment extends Fragment {
             String description = binding.etAddDescription.getText().toString();
 
             if (title.isEmpty() || description.isEmpty()) {
-                Toast.makeText(getContext(), "Judul dan Ringkasan harus diisi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Judul dan Ringkasan wajib diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -61,6 +68,7 @@ public class AddMovieFragment extends Fragment {
             movieBaru.setGambarPoster(poster);
             movieBaru.setRingkasan(description);
             movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
+            movieBaru.setUserId(currentUserId); // Menandai movie dengan ID user saat ini
 
             ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
                 @Override
@@ -68,14 +76,14 @@ public class AddMovieFragment extends Fragment {
                     if (isAdded()) {
                         Toast.makeText(getContext(), "Movie berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
                         clearForm();
-                        fetchMovies(); // Refresh data agar muncul di list
+                        fetchMyMovies(); 
                     }
                 }
 
                 @Override
                 public void onError(String errorMessage) {
                     if (isAdded()) {
-                        Toast.makeText(getContext(), "Gagal: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Gagal menyimpan: " + errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -88,12 +96,16 @@ public class AddMovieFragment extends Fragment {
         binding.rvAddedMovies.setAdapter(adapter);
     }
 
-    private void fetchMovies() {
+    private void fetchMyMovies() {
         ApiService.getAllMovie(new ApiService.ApiCallback<List<Movie>>() {
             @Override
             public void onSuccess(List<Movie> result) {
                 if (isAdded()) {
-                    addedMovies = result;
+                    // FILTER: Pastikan movie yang ditampilkan adalah milik user ini
+                    myAddedMovies = result.stream()
+                            .filter(movie -> currentUserId != null && currentUserId.equals(movie.getUserId()))
+                            .collect(Collectors.toList());
+                    
                     updateUIState();
                 }
             }
@@ -101,6 +113,7 @@ public class AddMovieFragment extends Fragment {
             @Override
             public void onError(String errorMessage) {
                 if (isAdded()) {
+                    Toast.makeText(getContext(), "Gagal mengambil data: " + errorMessage, Toast.LENGTH_SHORT).show();
                     updateUIState();
                 }
             }
@@ -108,8 +121,10 @@ public class AddMovieFragment extends Fragment {
     }
 
     private void updateUIState() {
+        if (binding == null) return;
+
         binding.layoutForm.setVisibility(View.GONE);
-        if (addedMovies == null || addedMovies.isEmpty()) {
+        if (myAddedMovies == null || myAddedMovies.isEmpty()) {
             binding.layoutEmptyState.setVisibility(View.VISIBLE);
             binding.layoutListState.setVisibility(View.GONE);
             binding.fabAddMovie.setVisibility(View.GONE);
@@ -117,7 +132,7 @@ public class AddMovieFragment extends Fragment {
             binding.layoutEmptyState.setVisibility(View.GONE);
             binding.layoutListState.setVisibility(View.VISIBLE);
             binding.fabAddMovie.setVisibility(View.VISIBLE);
-            adapter.setMovieList(addedMovies);
+            adapter.setMovieList(myAddedMovies);
         }
     }
 

@@ -6,6 +6,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
+import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -40,8 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            // Generate ID unik untuk User baru
+            String userId = UUID.randomUUID().toString();
+
             // Simpan ke lokal menggunakan SessionManager
-            sessionManager.registerUser(email, password);
+            sessionManager.registerUser(userId, email, password);
             
             Toast.makeText(RegisterActivity.this, "Pendaftaran berhasil, silakan login", Toast.LENGTH_SHORT).show();
             finish(); // Kembali ke halaman Login

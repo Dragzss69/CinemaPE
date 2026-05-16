@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
+import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +25,13 @@ public class LoginActivity extends AppCompatActivity {
 
         // Jika sudah login, langsung ke MainActivity
         if (sessionManager.isLoggedIn()) {
+            // Pastikan user lama punya ID sesi
+            if (sessionManager.getUserId() == null) {
+                String email = sessionManager.getEmail();
+                String id = sessionManager.getRegisteredId();
+                if (id == null) id = UUID.randomUUID().toString();
+                sessionManager.createLoginSession(id, email);
+            }
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
@@ -44,8 +52,18 @@ public class LoginActivity extends AppCompatActivity {
 
             // Cek Login di Lokal (SessionManager)
             if (sessionManager.checkLogin(email, password)) {
-                // Login Berhasil
-                sessionManager.createLoginSession(email);
+                // Ambil ID yang terdaftar
+                String userId = sessionManager.getRegisteredId();
+                
+                // Jika user lama (terdaftar sebelum update ID), buatkan ID baru
+                if (userId == null) {
+                    userId = UUID.randomUUID().toString();
+                    sessionManager.registerUser(userId, email, password);
+                }
+                
+                // Login Berhasil dan simpan sesi dengan ID
+                sessionManager.createLoginSession(userId, email);
+
                 Toast.makeText(LoginActivity.this, "Selamat datang kembali!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();

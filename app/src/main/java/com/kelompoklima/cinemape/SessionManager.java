@@ -8,11 +8,12 @@ public class SessionManager {
     private SharedPreferences.Editor editor;
     private static final String PREF_NAME = "CinemaPE_Session";
     
-    // Key untuk sesi login aktif
     private static final String IS_LOGGED_IN = "isLoggedIn";
+    private static final String KEY_USER_ID = "userId";
     private static final String KEY_LOGGED_IN_EMAIL = "loggedInEmail";
 
-    // Key untuk data registrasi (Simulasi Database Lokal)
+    // Key untuk data registrasi (Simulasi)
+    private static final String KEY_REGISTERED_ID = "reg_id";
     private static final String KEY_REGISTERED_EMAIL = "reg_email";
     private static final String KEY_REGISTERED_PASS = "reg_pass";
 
@@ -21,24 +22,22 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    // --- Fungsi Registrasi (Simpan ke Lokal) ---
-    public void registerUser(String email, String password) {
+    public void registerUser(String id, String email, String password) {
+        editor.putString(KEY_REGISTERED_ID, id);
         editor.putString(KEY_REGISTERED_EMAIL, email);
         editor.putString(KEY_REGISTERED_PASS, password);
         editor.apply();
     }
 
-    // --- Fungsi Cek Login ---
     public boolean checkLogin(String email, String password) {
         String registeredEmail = sharedPreferences.getString(KEY_REGISTERED_EMAIL, "");
         String registeredPass = sharedPreferences.getString(KEY_REGISTERED_PASS, "");
-
         return email.equals(registeredEmail) && password.equals(registeredPass);
     }
 
-    // --- Fungsi Sesi Login ---
-    public void createLoginSession(String email) {
+    public void createLoginSession(String id, String email) {
         editor.putBoolean(IS_LOGGED_IN, true);
+        editor.putString(KEY_USER_ID, id);
         editor.putString(KEY_LOGGED_IN_EMAIL, email);
         editor.apply();
     }
@@ -47,13 +46,22 @@ public class SessionManager {
         return sharedPreferences.getBoolean(IS_LOGGED_IN, false);
     }
 
+    public String getUserId() {
+        // Mengambil ID user yang sedang login
+        return sharedPreferences.getString(KEY_USER_ID, null);
+    }
+    
+    public String getRegisteredId() {
+        return sharedPreferences.getString(KEY_REGISTERED_ID, null);
+    }
+
     public String getEmail() {
         return sharedPreferences.getString(KEY_LOGGED_IN_EMAIL, null);
     }
 
     public void logout() {
-        // Hanya hapus status login, bukan data registrasi
         editor.putBoolean(IS_LOGGED_IN, false);
+        editor.putString(KEY_USER_ID, null);
         editor.putString(KEY_LOGGED_IN_EMAIL, null);
         editor.apply();
     }
