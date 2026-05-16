@@ -6,11 +6,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
-import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText edtEmail, edtPassword;
+    private TextInputEditText edtUsername, edtPassword;
     private Button btnRegister;
     private TextView tvToLogin;
     private SessionManager sessionManager;
@@ -22,16 +21,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
-        edtEmail = findViewById(R.id.edtRegEmail);
+        edtUsername = findViewById(R.id.edtRegUsername);
         edtPassword = findViewById(R.id.edtRegPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvToLogin = findViewById(R.id.tvToLogin);
 
         btnRegister.setOnClickListener(v -> {
-            String email = edtEmail.getText().toString();
-            String password = edtPassword.getText().toString();
+            String username = edtUsername.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Semua data harus diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -41,14 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // Generate ID unik untuk User baru
-            String userId = UUID.randomUUID().toString();
-
             // Simpan ke lokal menggunakan SessionManager
-            sessionManager.registerUser(userId, email, password);
+            sessionManager.registerUser(username, password);
             
             Toast.makeText(RegisterActivity.this, "Pendaftaran berhasil, silakan login", Toast.LENGTH_SHORT).show();
-            finish(); // Kembali ke halaman Login
+            finish(); // Kembali ke LoginActivity
         });
 
         tvToLogin.setOnClickListener(v -> {

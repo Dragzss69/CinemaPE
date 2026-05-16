@@ -7,11 +7,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
-import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText edtEmail, edtPassword;
+    private TextInputEditText edtUsername, edtPassword;
     private Button btnLogin;
     private TextView tvToRegister;
     private SessionManager sessionManager;
@@ -23,53 +22,32 @@ public class LoginActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
-        // Jika sudah login, langsung ke MainActivity
         if (sessionManager.isLoggedIn()) {
-            // Pastikan user lama punya ID sesi
-            if (sessionManager.getUserId() == null) {
-                String email = sessionManager.getEmail();
-                String id = sessionManager.getRegisteredId();
-                if (id == null) id = UUID.randomUUID().toString();
-                sessionManager.createLoginSession(id, email);
-            }
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
 
-        edtEmail = findViewById(R.id.edtEmail);
+        edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvToRegister = findViewById(R.id.tvToRegister);
 
         btnLogin.setOnClickListener(v -> {
-            String email = edtEmail.getText().toString();
-            String password = edtPassword.getText().toString();
+            String username = edtUsername.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email dan password harus diisi", Toast.LENGTH_SHORT).show();
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Username dan password harus diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Cek Login di Lokal (SessionManager)
-            if (sessionManager.checkLogin(email, password)) {
-                // Ambil ID yang terdaftar
-                String userId = sessionManager.getRegisteredId();
-                
-                // Jika user lama (terdaftar sebelum update ID), buatkan ID baru
-                if (userId == null) {
-                    userId = UUID.randomUUID().toString();
-                    sessionManager.registerUser(userId, email, password);
-                }
-                
-                // Login Berhasil dan simpan sesi dengan ID
-                sessionManager.createLoginSession(userId, email);
-
-                Toast.makeText(LoginActivity.this, "Selamat datang kembali!", Toast.LENGTH_SHORT).show();
+            if (sessionManager.checkLogin(username, password)) {
+                sessionManager.createLoginSession(username);
+                Toast.makeText(this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             } else {
-                // Login Gagal
-                Toast.makeText(LoginActivity.this, "EMAIL ATAU PASSWORD SALAH / BELUM TERDAFTAR", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "USERNAME/PASSWORD SALAH", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -19,7 +19,6 @@ public class ProfileDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Style for the "floating" look
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomDialog);
     }
 
@@ -36,18 +35,16 @@ public class ProfileDialogFragment extends DialogFragment {
 
         sessionManager = new SessionManager(requireContext());
 
-        // Menampilkan email yang sedang login
-        String email = sessionManager.getEmail();
-        if (email != null) {
-            binding.tvUserEmail.setText(email);
+        // Menampilkan username yang sedang login
+        String username = sessionManager.getUsername();
+        if (username != null) {
+            binding.tvUsername.setText(username);
         }
 
         binding.btnLogout.setOnClickListener(v -> {
-            // Proses Logout
             sessionManager.logout();
-            Toast.makeText(getContext(), "Berhasil Logout: " + email, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Berhasil Logout: " + username, Toast.LENGTH_SHORT).show();
             
-            // Pindah ke LoginActivity dan tutup semua activity sebelumnya
             Intent intent = new Intent(requireContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
