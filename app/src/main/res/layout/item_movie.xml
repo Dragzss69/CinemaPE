@@ -28,6 +28,7 @@
 
             <TextView
                 android:id="@+id/tv_movie_title"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -71,6 +72,7 @@
 
             <TextView
                 android:id="@+id/tv_movie_description"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
