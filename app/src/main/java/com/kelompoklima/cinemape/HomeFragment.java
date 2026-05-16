@@ -41,30 +41,44 @@ public class HomeFragment extends Fragment {
         binding.rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvMovies.setAdapter(adapter);
 
-        // Set listener untuk tombol save (Lokal)
+        // Update data favorit di adapter agar ikon berwarna biru jika sudah disimpan
+        updateSavedStateInAdapter();
+
         adapter.setOnSaveClickListener(movie -> {
-            // Perbaikan: Gunakan toggleMovieLocally agar bisa simpan & hapus otomatis
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
             Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            
+            // Refresh warna icon di adapter setelah diklik
+            updateSavedStateInAdapter();
         });
 
         // 2. Logika Pencarian (Search Bar)
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterMovies(s.toString());
             }
-
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        // 3. Ambil data dari API
         fetchMovies();
+    }
+
+    /**
+     * Mengambil ID film yang disimpan dari SessionManager dan mengirimkannya ke Adapter
+     * agar ikon favorit bisa berubah warna (Biru/Putih).
+     */
+    private void updateSavedStateInAdapter() {
+        List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
+        List<String> savedIds = new ArrayList<>();
+        for (Movie m : savedMovies) {
+            savedIds.add(m.getId());
+        }
+        adapter.setSavedMovieIds(savedIds);
     }
 
     private void fetchMovies() {
@@ -76,7 +90,6 @@ public class HomeFragment extends Fragment {
                     adapter.setMovieList(result);
                 }
             }
-
             @Override
             public void onError(String errorMessage) {
                 if (isAdded()) {
@@ -88,13 +101,18 @@ public class HomeFragment extends Fragment {
 
     private void filterMovies(String query) {
         if (allMovies == null) return;
-
         List<Movie> filteredList = allMovies.stream()
                 .filter(movie -> movie.getJudul() != null && 
                         movie.getJudul().toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
-
         adapter.setMovieList(filteredList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh status favorit saat kembali ke tab Home
+        updateSavedStateInAdapter();
     }
 
     @Override

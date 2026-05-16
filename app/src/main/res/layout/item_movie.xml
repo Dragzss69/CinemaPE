@@ -4,21 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="@color/purple_card_dark">
+    app:cardBackgroundColor="@color/black_card_dark">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_movie_poster"
             android:layout_width="100dp"
             android:layout_height="150dp"
-            android:background="#CCCCCC"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
         <LinearLayout
             android:id="@+id/layout_content"
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⭐ 0.0"
-                    android:textColor="#F4B400"
+                    android:textColor="@color/orange_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -57,10 +57,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="#333333"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_muted"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -80,7 +80,7 @@
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:textColor="@color/white"
+                android:textColor="@color/text_main"
                 android:textSize="14sp" />
 
         </LinearLayout>

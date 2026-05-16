@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_bg_dark">
+    android:background="@color/black_bg_dark">
 
     <!-- State 1: List Movie yang telah ditambahkan -->
     <LinearLayout
@@ -48,7 +48,7 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@android:drawable/ic_menu_add"
-            android:tint="@color/purple_primary" />
+            android:tint="@color/orange_primary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
         android:id="@+id/layout_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/purple_bg_dark"
+        android:background="@color/black_bg_dark"
         android:visibility="gone">
 
         <LinearLayout
@@ -97,8 +97,8 @@
                 android:layout_marginBottom="8dp"
                 android:hint="Judul Movie"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -116,8 +116,8 @@
                 android:layout_marginBottom="8dp"
                 android:hint="Kategori"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -135,8 +135,8 @@
                 android:layout_marginBottom="8dp"
                 android:hint="Skor Rating"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -155,8 +155,8 @@
                 android:layout_marginBottom="8dp"
                 android:hint="URL Poster"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -174,8 +174,8 @@
                 android:layout_marginBottom="8dp"
                 android:hint="URL Trailer"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -193,8 +193,8 @@
                 android:layout_marginBottom="16dp"
                 android:hint="Ringkasan"
                 android:textColorHint="@color/text_muted"
-                app:hintTextColor="@color/purple_primary"
-                app:boxStrokeColor="@color/purple_primary"
+                app:hintTextColor="@color/orange_primary"
+                app:boxStrokeColor="@color/orange_primary"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -213,9 +213,9 @@
                 android:id="@+id/btn_save_movie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/purple_primary"
+                android:backgroundTint="@color/orange_primary"
                 android:text="Simpan Movie"
-                android:textColor="@color/white"
+                android:textColor="@color/black_bg_dark"
                 android:textStyle="bold"
                 app:cornerRadius="8dp" />
 
@@ -225,7 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Batal"
-                android:textColor="@color/purple_primary" />
+                android:textColor="@color/orange_primary" />
 
         </LinearLayout>
     </ScrollView>
@@ -239,7 +239,7 @@
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
         android:visibility="gone"
-        app:backgroundTint="@color/purple_primary"
-        app:tint="@color/white" />
+        app:backgroundTint="@color/orange_primary"
+        app:tint="@color/black_bg_dark" />
 
 </FrameLayout>

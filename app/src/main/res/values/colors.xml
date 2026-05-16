@@ -3,10 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="purple_primary">#FF9D4EDD</color>
-    <color name="purple_primary_variant">#FF7B2CBF</color>
-    <color name="purple_bg_dark">#FF0A0516</color>
-    <color name="purple_card_dark">#FF181126</color>
-    <color name="text_main">#FFF5F5F7</color>
-    <color name="text_muted">#FF8E8A9A</color>
+    <!-- Tema Orange Hitam -->
+    <color name="orange_primary">#FF8C00</color>
+    <color name="orange_accent">#FFA500</color>
+    <color name="black_bg_dark">#0C0C0C</color>
+    <color name="black_card_dark">#1A1A1A</color>
+
+    <color name="text_main">#FFFFFF</color>
+    <color name="text_muted">#B0B0B0</color>
+
+    <!-- Status Favorit -->
+    <color name="favorite_active">#FF8C00</color>
 </resources>

@@ -1,33 +1,32 @@
 package com.kelompoklima.cinemape;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movieList = new ArrayList<>();
+    private Set<String> savedMovieIds = new HashSet<>();
     private OnSaveClickListener onSaveClickListener;
 
     public interface OnSaveClickListener {
         void onSaveClick(Movie movie);
-    }
-
-    public MovieAdapter() {
-    }
-
-    public MovieAdapter(List<Movie> movieList) {
-        this.movieList = movieList;
     }
 
     public void setOnSaveClickListener(OnSaveClickListener listener) {
@@ -36,6 +35,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     public void setMovieList(List<Movie> movieList) {
         this.movieList = movieList;
+        notifyDataSetChanged();
+    }
+
+    public void setSavedMovieIds(List<String> savedIds) {
+        this.savedMovieIds = new HashSet<>(savedIds);
         notifyDataSetChanged();
     }
 
@@ -54,10 +58,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         holder.tvRating.setText("⭐ " + movie.getSkorRating());
         holder.tvCategory.setText(movie.getKategori());
 
-        // Format tanggal rilis
         if (movie.getTanggalRilis() > 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(movie.getTanggalRilis() * 1000L)); // Asumsi timestamp dalam detik
+            String formattedDate = sdf.format(new Date(movie.getTanggalRilis() * 1000L));
             holder.tvReleaseDate.setText("Rilis: " + formattedDate);
             holder.tvReleaseDate.setVisibility(View.VISIBLE);
         } else {
@@ -69,6 +72,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 .placeholder(android.R.drawable.progress_horizontal)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.ivPoster);
+
+        // Update warna icon favorit: Gunakan Orange (#FF8C00) agar sesuai tema baru
+        if (savedMovieIds.contains(movie.getId())) {
+            ImageViewCompat.setImageTintList(holder.ivSaveMovie, ColorStateList.valueOf(Color.parseColor("#FF8C00")));
+        } else {
+            ImageViewCompat.setImageTintList(holder.ivSaveMovie, ColorStateList.valueOf(Color.WHITE));
+        }
 
         holder.ivSaveMovie.setOnClickListener(v -> {
             if (onSaveClickListener != null) {

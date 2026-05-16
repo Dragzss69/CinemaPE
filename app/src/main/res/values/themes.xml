@@ -2,21 +2,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Base.Theme.CinemaPE" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/purple_primary</item>
-        <item name="colorOnPrimary">@color/purple_bg_dark</item>
+        <!-- Main theme colors -->
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorOnPrimary">@color/black_bg_dark</item>
 
-        <item name="android:windowBackground">@color/purple_bg_dark</item>
-        <item name="colorSurface">@color/purple_card_dark</item>
+        <item name="android:windowBackground">@color/black_bg_dark</item>
+        <item name="colorSurface">@color/black_card_dark</item>
         <item name="colorOnSurface">@color/text_main</item>
 
-        <item name="colorPrimaryContainer">@color/purple_bg_dark</item>
-        <item name="colorOnPrimaryContainer">@color/purple_primary</item>
-        <item name="colorSurfaceVariant">@color/purple_bg_dark</item>
+        <item name="colorPrimaryContainer">@color/black_bg_dark</item>
+        <item name="colorOnPrimaryContainer">@color/orange_primary</item>
+        <item name="colorSurfaceVariant">@color/black_bg_dark</item>
 
-        <item name="colorSecondaryContainer">#269D4EDD</item>
-        <item name="colorOnSecondaryContainer">@color/purple_primary</item>
+        <item name="colorSecondaryContainer">#26FF8C00</item> <!-- Orange with transparency -->
+        <item name="colorOnSecondaryContainer">@color/orange_primary</item>
 
-        <item name="android:statusBarColor">@color/purple_bg_dark</item>
+        <item name="android:statusBarColor">@color/black_bg_dark</item>
     </style>
 
     <style name="Theme.CinemaPE" parent="Base.Theme.CinemaPE" />
