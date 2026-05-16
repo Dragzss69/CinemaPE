@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/purple_bg_dark">
 
     <!-- State 1: List Movie yang telah ditambahkan -->
     <LinearLayout
@@ -17,6 +18,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Koleksi Movie Anda"
+            android:textColor="@color/text_main"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -46,7 +48,7 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@android:drawable/ic_menu_add"
-            android:tint="@android:color/holo_purple" />
+            android:tint="@color/purple_primary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,13 +56,14 @@
             android:layout_marginTop="16dp"
             android:text="Belum ada movie yang ditambahkan"
             android:textAlignment="center"
+            android:textColor="@color/text_main"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Klik ikon di atas untuk menambah"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/text_muted"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -69,7 +72,7 @@
         android:id="@+id/layout_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="@color/purple_bg_dark"
         android:visibility="gone">
 
         <LinearLayout
@@ -84,6 +87,7 @@
                 android:layout_marginBottom="24dp"
                 android:text="Tambah Movie Baru"
                 android:textAlignment="center"
+                android:textColor="@color/text_main"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -91,56 +95,109 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:hint="Judul Movie">
+                android:hint="Judul Movie"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_add_title"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:hint="Kategori">
+                android:hint="Kategori"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_add_category"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:hint="Skor Rating">
+                android:hint="Skor Rating"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_add_rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/text_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:hint="URL Poster">
+                android:hint="URL Poster"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_add_poster"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:hint="URL Trailer"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_add_trailer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Ringkasan">
+                android:hint="Ringkasan"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/purple_primary"
+                app:boxStrokeColor="@color/purple_primary"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_add_description"
@@ -148,14 +205,19 @@
                     android:layout_height="wrap_content"
                     android:gravity="top"
                     android:inputType="textMultiLine"
-                    android:lines="4" />
+                    android:lines="4"
+                    android:textColor="@color/text_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/btn_save_movie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Simpan Movie" />
+                android:backgroundTint="@color/purple_primary"
+                android:text="Simpan Movie"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
 
             <Button
                 android:id="@+id/btn_cancel_add"
@@ -163,7 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Batal"
-                android:textColor="@android:color/holo_red_dark" />
+                android:textColor="@color/purple_primary" />
 
         </LinearLayout>
     </ScrollView>
@@ -177,6 +239,7 @@
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
         android:visibility="gone"
-        app:tint="@android:color/white" />
+        app:backgroundTint="@color/purple_primary"
+        app:tint="@color/white" />
 
 </FrameLayout>
