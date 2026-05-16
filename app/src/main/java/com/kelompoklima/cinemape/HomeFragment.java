@@ -43,8 +43,10 @@ public class HomeFragment extends Fragment {
 
         // Set listener untuk tombol save (Lokal)
         adapter.setOnSaveClickListener(movie -> {
-            sessionManager.saveMovieLocally(movie);
-            Toast.makeText(getContext(), "Movie disimpan ke favorit!", Toast.LENGTH_SHORT).show();
+            // Perbaikan: Gunakan toggleMovieLocally agar bisa simpan & hapus otomatis
+            boolean isSaved = sessionManager.toggleMovieLocally(movie);
+            String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
         });
 
         // 2. Logika Pencarian (Search Bar)
