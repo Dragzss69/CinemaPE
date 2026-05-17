@@ -29,6 +29,9 @@ public class Movie implements Serializable {
     @SerializedName("userId")
     private String userId;
 
+    @SerializedName("url_trailer")
+    private String urlTrailer;
+
     public Movie() {
     }
 
@@ -54,4 +57,6 @@ public class Movie implements Serializable {
     public void setKategori(String kategori) { this.kategori = kategori; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    public String getUrlTrailer() { return urlTrailer; }
+    public void setUrlTrailer(String urlTrailer) { this.urlTrailer = urlTrailer; }
 }

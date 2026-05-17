@@ -51,6 +51,7 @@ public class AddMovieFragment extends Fragment {
         String category = binding.etAddCategory.getText().toString();
         String rating = binding.etAddRating.getText().toString();
         String poster = binding.etAddPoster.getText().toString();
+        String trailer = binding.etAddTrailer.getText().toString();
         String description = binding.etAddDescription.getText().toString();
 
         if (title.isEmpty() || description.isEmpty()) {
@@ -63,6 +64,7 @@ public class AddMovieFragment extends Fragment {
         movieBaru.setKategori(category);
         movieBaru.setSkorRating(rating);
         movieBaru.setGambarPoster(poster);
+        movieBaru.setUrlTrailer(trailer);
         movieBaru.setRingkasan(description);
         movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
         movieBaru.setUserId(currentUsername);
@@ -112,7 +114,9 @@ public class AddMovieFragment extends Fragment {
     private void updateSavedStateInAdapter() {
         List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
         List<String> savedIds = new ArrayList<>();
-        for (Movie m : savedMovies) savedIds.add(m.getId());
+        for (Movie m : savedMovies) {
+            if (m.getId() != null) savedIds.add(m.getId());
+        }
         adapter.setSavedMovieIds(savedIds);
     }
 
@@ -167,6 +171,7 @@ public class AddMovieFragment extends Fragment {
         binding.etAddCategory.setText("");
         binding.etAddRating.setText("");
         binding.etAddPoster.setText("");
+        binding.etAddTrailer.setText("");
         binding.etAddDescription.setText("");
     }
 

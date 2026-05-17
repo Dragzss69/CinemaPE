@@ -55,6 +55,8 @@ public class EditMovieFragment extends Fragment {
         binding.etEditTitle.setText(movie.getJudul());
         binding.etEditCategory.setText(movie.getKategori());
         binding.etEditRating.setText(movie.getSkorRating());
+        binding.etEditPoster.setText(movie.getGambarPoster());
+        binding.etEditTrailer.setText(movie.getUrlTrailer());
         binding.etEditDescription.setText(movie.getRingkasan());
     }
 
@@ -62,6 +64,8 @@ public class EditMovieFragment extends Fragment {
         String title = binding.etEditTitle.getText().toString();
         String category = binding.etEditCategory.getText().toString();
         String rating = binding.etEditRating.getText().toString();
+        String poster = binding.etEditPoster.getText().toString();
+        String trailer = binding.etEditTrailer.getText().toString();
         String description = binding.etEditDescription.getText().toString();
 
         if (title.isEmpty() || description.isEmpty()) {
@@ -72,6 +76,8 @@ public class EditMovieFragment extends Fragment {
         movie.setJudul(title);
         movie.setKategori(category);
         movie.setSkorRating(rating);
+        movie.setGambarPoster(poster);
+        movie.setUrlTrailer(trailer);
         movie.setRingkasan(description);
 
         ApiService.updateMovie(movie.getId(), movie, new ApiService.ApiCallback<Movie>() {
