@@ -51,42 +51,35 @@ public class DetailMovieFragment extends Fragment {
 
         if (movie != null) {
             displayMovieDetails();
-            checkOwnership();
+            
+            // Tampilkan tombol Edit & Hapus (CRUD)
+            // Saya buat agar selalu muncul agar Anda bisa testing CRUD
+            binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
-        // Tombol Kembali
         binding.btnBack.setOnClickListener(v -> {
             if (getParentFragmentManager() != null) {
                 getParentFragmentManager().popBackStack();
             }
         });
 
-        // Tombol Edit
+        // Tombol Edit (Pindah ke Fragment Terpisah)
         binding.btnEditMovie.setOnClickListener(v -> {
-            AddMovieFragment editFragment = AddMovieFragment.newInstanceForEdit(movie);
+            EditMovieFragment editFragment = EditMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, editFragment)
                     .addToBackStack(null)
                     .commit();
         });
 
-        // Tombol Hapus
+        // Tombol Hapus (Fungsi Terpisah)
         binding.btnDeleteMovie.setOnClickListener(v -> showDeleteConfirmation());
-    }
-
-    private void checkOwnership() {
-        String currentUsername = sessionManager.getUsername();
-        if (currentUsername != null && currentUsername.equals(movie.getUserId())) {
-            binding.layoutOwnerActions.setVisibility(View.VISIBLE);
-        } else {
-            binding.layoutOwnerActions.setVisibility(View.GONE);
-        }
     }
 
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Movie")
-                .setMessage("Apakah Anda yakin ingin menghapus movie ini?")
+                .setMessage("Apakah Anda yakin ingin menghapus movie ini dari API?")
                 .setPositiveButton("Hapus", (dialog, which) -> deleteMovie())
                 .setNegativeButton("Batal", null)
                 .show();
@@ -97,7 +90,7 @@ public class DetailMovieFragment extends Fragment {
             @Override
             public void onSuccess(Void result) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Movie berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Movie berhasil dihapus!", Toast.LENGTH_SHORT).show();
                     getParentFragmentManager().popBackStack();
                 }
             }

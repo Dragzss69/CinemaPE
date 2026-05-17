@@ -1,7 +1,6 @@
 package com.kelompoklima.cinemape;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,23 +21,6 @@ public class AddMovieFragment extends Fragment {
     private List<Movie> myAddedMovies = new ArrayList<>();
     private SessionManager sessionManager;
     private String currentUsername;
-    private Movie movieToEdit;
-
-    public static AddMovieFragment newInstanceForEdit(Movie movie) {
-        AddMovieFragment fragment = new AddMovieFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("movie_to_edit", movie);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            movieToEdit = (Movie) getArguments().getSerializable("movie_to_edit");
-        }
-    }
 
     @Nullable
     @Override
@@ -57,35 +39,14 @@ public class AddMovieFragment extends Fragment {
         setupRecyclerView();
         fetchMyMovies();
 
-        if (movieToEdit != null) {
-            showForm();
-            prefillForm(movieToEdit);
-        }
-
         binding.ivAddPlaceholder.setOnClickListener(v -> showForm());
         binding.fabAddMovie.setOnClickListener(v -> showForm());
-        binding.btnCancelAdd.setOnClickListener(v -> {
-            if (movieToEdit != null) {
-                getParentFragmentManager().popBackStack();
-            } else {
-                hideForm();
-            }
-        });
+        binding.btnCancelAdd.setOnClickListener(v -> hideForm());
 
-        binding.btnSaveMovie.setOnClickListener(v -> saveMovie());
+        binding.btnSaveMovie.setOnClickListener(v -> saveNewMovie());
     }
 
-    private void prefillForm(Movie movie) {
-        binding.etAddTitle.setText(movie.getJudul());
-        binding.etAddCategory.setText(movie.getKategori());
-        binding.etAddRating.setText(movie.getSkorRating());
-        binding.etAddPoster.setText(movie.getGambarPoster());
-        binding.etAddTrailer.setText(movie.getUrlTrailer());
-        binding.etAddDescription.setText(movie.getRingkasan());
-        binding.btnSaveMovie.setText("Update Movie");
-    }
-
-    private void saveMovie() {
+    private void saveNewMovie() {
         String title = binding.etAddTitle.getText().toString();
         String category = binding.etAddCategory.getText().toString();
         String rating = binding.etAddRating.getText().toString();
@@ -98,54 +59,34 @@ public class AddMovieFragment extends Fragment {
             return;
         }
 
-        Movie movieData = movieToEdit != null ? movieToEdit : new Movie();
-        movieData.setJudul(title);
-        movieData.setKategori(category);
-        movieData.setSkorRating(rating);
-        movieData.setGambarPoster(poster);
-        movieData.setUrlTrailer(trailer);
-        movieData.setRingkasan(description);
-        movieData.setUserId(currentUsername);
+        Movie movieBaru = new Movie();
+        movieBaru.setJudul(title);
+        movieBaru.setKategori(category);
+        movieBaru.setSkorRating(rating);
+        movieBaru.setGambarPoster(poster);
+        movieBaru.setUrlTrailer(trailer);
+        movieBaru.setRingkasan(description);
+        movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
+        movieBaru.setUserId(currentUsername);
 
-        if (movieToEdit == null) {
-            movieData.setTanggalRilis(System.currentTimeMillis() / 1000);
-            ApiService.createMovie(movieData, new ApiService.ApiCallback<Movie>() {
-                @Override
-                public void onSuccess(Movie result) {
-                    handleSaveSuccess("Movie berhasil ditambahkan!");
+        ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
+            @Override
+            public void onSuccess(Movie result) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Movie berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
+                    clearForm();
+                    fetchMyMovies();
+                    hideForm();
                 }
+            }
 
-                @Override
-                public void onError(String errorMessage) {
+            @Override
+            public void onError(String errorMessage) {
+                if (isAdded()) {
                     Toast.makeText(getContext(), "Gagal menyimpan: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
-            });
-        } else {
-            ApiService.updateMovie(movieToEdit.getId(), movieData, new ApiService.ApiCallback<Movie>() {
-                @Override
-                public void onSuccess(Movie result) {
-                    handleSaveSuccess("Movie berhasil diperbarui!");
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(getContext(), "Gagal memperbarui: " + errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    private void handleSaveSuccess(String message) {
-        if (isAdded()) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            clearForm();
-            if (movieToEdit != null) {
-                getParentFragmentManager().popBackStack();
-            } else {
-                fetchMyMovies();
-                hideForm();
             }
-        }
+        });
     }
 
     private void setupRecyclerView() {
@@ -157,8 +98,7 @@ public class AddMovieFragment extends Fragment {
 
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
-            String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
-            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), isSaved ? "Disimpan" : "Dihapus", Toast.LENGTH_SHORT).show();
             updateSavedStateInAdapter();
         });
 
@@ -186,24 +126,19 @@ public class AddMovieFragment extends Fragment {
                     myAddedMovies = result.stream()
                             .filter(movie -> currentUsername != null && currentUsername.equals(movie.getUserId()))
                             .collect(Collectors.toList());
-                    
                     updateUIState();
                 }
             }
 
             @Override
             public void onError(String errorMessage) {
-                if (isAdded()) {
-                    Toast.makeText(getContext(), "Gagal mengambil data: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    updateUIState();
-                }
+                if (isAdded()) updateUIState();
             }
         });
     }
 
     private void updateUIState() {
         if (binding == null) return;
-
         binding.layoutForm.setVisibility(View.GONE);
         if (myAddedMovies == null || myAddedMovies.isEmpty()) {
             binding.layoutEmptyState.setVisibility(View.VISIBLE);
@@ -236,13 +171,13 @@ public class AddMovieFragment extends Fragment {
         binding.etAddPoster.setText("");
         binding.etAddTrailer.setText("");
         binding.etAddDescription.setText("");
-        binding.btnSaveMovie.setText("Simpan Movie");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         updateSavedStateInAdapter();
+        fetchMyMovies();
     }
 
     @Override
