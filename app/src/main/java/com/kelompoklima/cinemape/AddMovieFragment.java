@@ -36,7 +36,7 @@ public class AddMovieFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         
-        // AMBIL IDENTITAS USER: Menggunakan Username dari SessionManager
+        // AMBIL IDENTITAS USER
         currentUsername = sessionManager.getUsername();
 
         setupRecyclerView();
@@ -67,7 +67,7 @@ public class AddMovieFragment extends Fragment {
             movieBaru.setUrlTrailer(trailer);
             movieBaru.setRingkasan(description);
             movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
-            movieBaru.setUserId(currentUsername); // Menandai movie dengan username saat ini
+            movieBaru.setUserId(currentUsername);
 
             ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
                 @Override
@@ -94,11 +94,32 @@ public class AddMovieFragment extends Fragment {
         binding.rvAddedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvAddedMovies.setAdapter(adapter);
 
-        // Listener untuk favorit
+        // Update data favorit di adapter (untuk warna icon)
+        updateSavedStateInAdapter();
+
+        // 1. Listener untuk Favorit
         adapter.setOnSaveClickListener(movie -> {
-            // Toast sementara karena fitur simpan lokal favorit belum diimplementasikan di SessionManager
-            Toast.makeText(getContext(), "Movie ditambahkan ke favorit!", Toast.LENGTH_SHORT).show();
+            boolean isSaved = sessionManager.toggleMovieLocally(movie);
+            String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            updateSavedStateInAdapter();
         });
+
+        // 2. Listener untuk KLIK ITEM (Buka Detail)
+        adapter.setOnItemClickListener(movie -> {
+            DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+    }
+
+    private void updateSavedStateInAdapter() {
+        List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
+        List<String> savedIds = new ArrayList<>();
+        for (Movie m : savedMovies) savedIds.add(m.getId());
+        adapter.setSavedMovieIds(savedIds);
     }
 
     private void fetchMyMovies() {
@@ -106,7 +127,6 @@ public class AddMovieFragment extends Fragment {
             @Override
             public void onSuccess(List<Movie> result) {
                 if (isAdded()) {
-                    // FILTER: Pastikan movie yang ditampilkan adalah milik user ini berdasarkan Username
                     myAddedMovies = result.stream()
                             .filter(movie -> currentUsername != null && currentUsername.equals(movie.getUserId()))
                             .collect(Collectors.toList());
@@ -160,6 +180,12 @@ public class AddMovieFragment extends Fragment {
         binding.etAddPoster.setText("");
         binding.etAddTrailer.setText("");
         binding.etAddDescription.setText("");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateSavedStateInAdapter();
     }
 
     @Override

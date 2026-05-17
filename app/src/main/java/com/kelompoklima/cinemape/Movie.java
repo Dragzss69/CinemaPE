@@ -1,7 +1,9 @@
 package com.kelompoklima.cinemape;
-import com.google.gson.annotations.SerializedName;
 
-public class Movie {
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
+
+public class Movie implements Serializable {
 
     @SerializedName("id")
     private String id;
@@ -42,34 +44,24 @@ public class Movie {
     }
 
     // --- Getter dan Setter ---
-
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-
     public String getJudul() { return judul; }
     public void setJudul(String judul) { this.judul = judul; }
-
     public String getRingkasan() { return ringkasan; }
     public void setRingkasan(String ringkasan) { this.ringkasan = ringkasan; }
-
     public String getGambarPoster() { return gambarPoster; }
     public void setGambarPoster(String gambarPoster) { this.gambarPoster = gambarPoster; }
-
     public String getGambarSampul() { return gambarSampul; }
     public void setGambarSampul(String gambarSampul) { this.gambarSampul = gambarSampul; }
-
     public long getTanggalRilis() { return tanggalRilis; }
     public void setTanggalRilis(long tanggalRilis) { this.tanggalRilis = tanggalRilis; }
-
     public String getSkorRating() { return skorRating; }
     public void setSkorRating(String skorRating) { this.skorRating = skorRating; }
-
     public String getKategori() { return kategori; }
     public void setKategori(String kategori) { this.kategori = kategori; }
-
     public String getUrlTrailer() { return urlTrailer; }
     public void setUrlTrailer(String urlTrailer) { this.urlTrailer = urlTrailer; }
-
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 }

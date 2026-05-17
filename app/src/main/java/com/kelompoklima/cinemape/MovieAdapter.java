@@ -24,13 +24,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private List<Movie> movieList = new ArrayList<>();
     private Set<String> savedMovieIds = new HashSet<>();
     private OnSaveClickListener onSaveClickListener;
+    private OnItemClickListener onItemClickListener;
 
     public interface OnSaveClickListener {
         void onSaveClick(Movie movie);
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(Movie movie);
+    }
+
     public void setOnSaveClickListener(OnSaveClickListener listener) {
         this.onSaveClickListener = listener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     public void setMovieList(List<Movie> movieList) {
@@ -83,6 +92,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         holder.ivSaveMovie.setOnClickListener(v -> {
             if (onSaveClickListener != null) {
                 onSaveClickListener.onSaveClick(movie);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(movie);
             }
         });
     }

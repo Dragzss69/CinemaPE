@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.kelompoklima.cinemape.databinding.FragmentSavedBinding;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SavedFragment extends Fragment {
@@ -39,19 +40,32 @@ public class SavedFragment extends Fragment {
         binding.rvSavedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvSavedMovies.setAdapter(adapter);
 
-        // Tambahkan logika toggle (hapus dari favorit jika diklik lagi)
+        // 1. Listener untuk menghapus dari favorit
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             if (!isSaved) {
                 Toast.makeText(getContext(), "Dihapus dari favorit", Toast.LENGTH_SHORT).show();
-                loadSavedMoviesLocal(); // Refresh list setelah dihapus
+                loadSavedMoviesLocal(); // Refresh list agar item hilang dari layar
             }
+        });
+
+        // 2. Listener untuk KLIK ITEM (Buka Detail Movie)
+        adapter.setOnItemClickListener(movie -> {
+            DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
     }
 
     private void loadSavedMoviesLocal() {
-        // Mengambil data dari penyimpanan lokal (SessionManager)
         List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
+        
+        // Kirim ID favorit ke adapter agar ikon berwarna orange
+        List<String> savedIds = new ArrayList<>();
+        for (Movie m : savedMovies) savedIds.add(m.getId());
+        adapter.setSavedMovieIds(savedIds);
 
         if (savedMovies == null || savedMovies.isEmpty()) {
             binding.layoutEmptySaved.setVisibility(View.VISIBLE);
@@ -66,7 +80,6 @@ public class SavedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh data setiap kali user membuka tab Saved
         loadSavedMoviesLocal();
     }
 

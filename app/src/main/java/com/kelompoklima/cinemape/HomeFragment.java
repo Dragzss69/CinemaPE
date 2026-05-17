@@ -41,9 +41,10 @@ public class HomeFragment extends Fragment {
         binding.rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvMovies.setAdapter(adapter);
 
-        // Update data favorit di adapter agar ikon berwarna biru jika sudah disimpan
+        // Update status favorit agar ikon berwarna orange jika sudah disimpan
         updateSavedStateInAdapter();
 
+        // 2. Listener untuk tombol SIMPAN (Favorit)
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
@@ -53,7 +54,16 @@ public class HomeFragment extends Fragment {
             updateSavedStateInAdapter();
         });
 
-        // 2. Logika Pencarian (Search Bar)
+        // 3. Listener untuk KLIK ITEM (Buka Detail Movie)
+        adapter.setOnItemClickListener(movie -> {
+            DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null) // Memungkinkan user kembali ke Home dengan tombol back
+                    .commit();
+        });
+
+        // 4. Logika Pencarian (Search Bar)
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -69,8 +79,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Mengambil ID film yang disimpan dari SessionManager dan mengirimkannya ke Adapter
-     * agar ikon favorit bisa berubah warna (Biru/Putih).
+     * Sinkronisasi status favorit lokal ke Adapter untuk pewarnaan ikon.
      */
     private void updateSavedStateInAdapter() {
         List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
