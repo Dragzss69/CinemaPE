@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.kelompoklima.cinemape.databinding.FragmentDetailMovieBinding;
@@ -17,6 +19,7 @@ public class DetailMovieFragment extends Fragment {
 
     private FragmentDetailMovieBinding binding;
     private Movie movie;
+    private SessionManager sessionManager;
 
     public static DetailMovieFragment newInstance(Movie movie) {
         DetailMovieFragment fragment = new DetailMovieFragment();
@@ -32,6 +35,7 @@ public class DetailMovieFragment extends Fragment {
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable("movie");
         }
+        sessionManager = new SessionManager(requireContext());
     }
 
     @Nullable
@@ -47,6 +51,7 @@ public class DetailMovieFragment extends Fragment {
 
         if (movie != null) {
             displayMovieDetails();
+            checkOwnership();
         }
 
         // Tombol Kembali
@@ -55,8 +60,55 @@ public class DetailMovieFragment extends Fragment {
                 getParentFragmentManager().popBackStack();
             }
         });
-        
-        // Tombol Watch Trailer dihapus sesuai permintaan
+
+        // Tombol Edit
+        binding.btnEditMovie.setOnClickListener(v -> {
+            AddMovieFragment editFragment = AddMovieFragment.newInstanceForEdit(movie);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, editFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        // Tombol Hapus
+        binding.btnDeleteMovie.setOnClickListener(v -> showDeleteConfirmation());
+    }
+
+    private void checkOwnership() {
+        String currentUsername = sessionManager.getUsername();
+        if (currentUsername != null && currentUsername.equals(movie.getUserId())) {
+            binding.layoutOwnerActions.setVisibility(View.VISIBLE);
+        } else {
+            binding.layoutOwnerActions.setVisibility(View.GONE);
+        }
+    }
+
+    private void showDeleteConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Hapus Movie")
+                .setMessage("Apakah Anda yakin ingin menghapus movie ini?")
+                .setPositiveButton("Hapus", (dialog, which) -> deleteMovie())
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    private void deleteMovie() {
+        ApiService.deleteMovie(movie.getId(), new ApiService.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Movie berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    getParentFragmentManager().popBackStack();
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Gagal menghapus: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void displayMovieDetails() {

@@ -22,6 +22,23 @@ public class AddMovieFragment extends Fragment {
     private List<Movie> myAddedMovies = new ArrayList<>();
     private SessionManager sessionManager;
     private String currentUsername;
+    private Movie movieToEdit;
+
+    public static AddMovieFragment newInstanceForEdit(Movie movie) {
+        AddMovieFragment fragment = new AddMovieFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("movie_to_edit", movie);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            movieToEdit = (Movie) getArguments().getSerializable("movie_to_edit");
+        }
+    }
 
     @Nullable
     @Override
@@ -35,58 +52,100 @@ public class AddMovieFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sessionManager = new SessionManager(requireContext());
-        
-        // AMBIL IDENTITAS USER
         currentUsername = sessionManager.getUsername();
 
         setupRecyclerView();
         fetchMyMovies();
 
+        if (movieToEdit != null) {
+            showForm();
+            prefillForm(movieToEdit);
+        }
+
         binding.ivAddPlaceholder.setOnClickListener(v -> showForm());
         binding.fabAddMovie.setOnClickListener(v -> showForm());
-        binding.btnCancelAdd.setOnClickListener(v -> hideForm());
-
-        binding.btnSaveMovie.setOnClickListener(v -> {
-            String title = binding.etAddTitle.getText().toString();
-            String category = binding.etAddCategory.getText().toString();
-            String rating = binding.etAddRating.getText().toString();
-            String poster = binding.etAddPoster.getText().toString();
-            String trailer = binding.etAddTrailer.getText().toString();
-            String description = binding.etAddDescription.getText().toString();
-
-            if (title.isEmpty() || description.isEmpty()) {
-                Toast.makeText(getContext(), "Judul dan Ringkasan wajib diisi", Toast.LENGTH_SHORT).show();
-                return;
+        binding.btnCancelAdd.setOnClickListener(v -> {
+            if (movieToEdit != null) {
+                getParentFragmentManager().popBackStack();
+            } else {
+                hideForm();
             }
+        });
 
-            Movie movieBaru = new Movie();
-            movieBaru.setJudul(title);
-            movieBaru.setKategori(category);
-            movieBaru.setSkorRating(rating);
-            movieBaru.setGambarPoster(poster);
-            movieBaru.setUrlTrailer(trailer);
-            movieBaru.setRingkasan(description);
-            movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000);
-            movieBaru.setUserId(currentUsername);
+        binding.btnSaveMovie.setOnClickListener(v -> saveMovie());
+    }
 
-            ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
+    private void prefillForm(Movie movie) {
+        binding.etAddTitle.setText(movie.getJudul());
+        binding.etAddCategory.setText(movie.getKategori());
+        binding.etAddRating.setText(movie.getSkorRating());
+        binding.etAddPoster.setText(movie.getGambarPoster());
+        binding.etAddTrailer.setText(movie.getUrlTrailer());
+        binding.etAddDescription.setText(movie.getRingkasan());
+        binding.btnSaveMovie.setText("Update Movie");
+    }
+
+    private void saveMovie() {
+        String title = binding.etAddTitle.getText().toString();
+        String category = binding.etAddCategory.getText().toString();
+        String rating = binding.etAddRating.getText().toString();
+        String poster = binding.etAddPoster.getText().toString();
+        String trailer = binding.etAddTrailer.getText().toString();
+        String description = binding.etAddDescription.getText().toString();
+
+        if (title.isEmpty() || description.isEmpty()) {
+            Toast.makeText(getContext(), "Judul dan Ringkasan wajib diisi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Movie movieData = movieToEdit != null ? movieToEdit : new Movie();
+        movieData.setJudul(title);
+        movieData.setKategori(category);
+        movieData.setSkorRating(rating);
+        movieData.setGambarPoster(poster);
+        movieData.setUrlTrailer(trailer);
+        movieData.setRingkasan(description);
+        movieData.setUserId(currentUsername);
+
+        if (movieToEdit == null) {
+            movieData.setTanggalRilis(System.currentTimeMillis() / 1000);
+            ApiService.createMovie(movieData, new ApiService.ApiCallback<Movie>() {
                 @Override
                 public void onSuccess(Movie result) {
-                    if (isAdded()) {
-                        Toast.makeText(getContext(), "Movie berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
-                        clearForm();
-                        fetchMyMovies(); 
-                    }
+                    handleSaveSuccess("Movie berhasil ditambahkan!");
                 }
 
                 @Override
                 public void onError(String errorMessage) {
-                    if (isAdded()) {
-                        Toast.makeText(getContext(), "Gagal menyimpan: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(getContext(), "Gagal menyimpan: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
             });
-        });
+        } else {
+            ApiService.updateMovie(movieToEdit.getId(), movieData, new ApiService.ApiCallback<Movie>() {
+                @Override
+                public void onSuccess(Movie result) {
+                    handleSaveSuccess("Movie berhasil diperbarui!");
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(getContext(), "Gagal memperbarui: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void handleSaveSuccess(String message) {
+        if (isAdded()) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            clearForm();
+            if (movieToEdit != null) {
+                getParentFragmentManager().popBackStack();
+            } else {
+                fetchMyMovies();
+                hideForm();
+            }
+        }
     }
 
     private void setupRecyclerView() {
@@ -94,10 +153,8 @@ public class AddMovieFragment extends Fragment {
         binding.rvAddedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvAddedMovies.setAdapter(adapter);
 
-        // Update data favorit di adapter (untuk warna icon)
         updateSavedStateInAdapter();
 
-        // 1. Listener untuk Favorit
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             String msg = isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit";
@@ -105,7 +162,6 @@ public class AddMovieFragment extends Fragment {
             updateSavedStateInAdapter();
         });
 
-        // 2. Listener untuk KLIK ITEM (Buka Detail)
         adapter.setOnItemClickListener(movie -> {
             DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -180,6 +236,7 @@ public class AddMovieFragment extends Fragment {
         binding.etAddPoster.setText("");
         binding.etAddTrailer.setText("");
         binding.etAddDescription.setText("");
+        binding.btnSaveMovie.setText("Simpan Movie");
     }
 
     @Override

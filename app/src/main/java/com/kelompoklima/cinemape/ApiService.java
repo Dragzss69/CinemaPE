@@ -69,6 +69,39 @@ public class ApiService {
                 });
     }
 
+    public static void updateMovie(String id, Movie movieUpdated, ApiCallback<Movie> callback) {
+        String jsonBody = gson.toJson(movieUpdated);
+
+        Fuel.INSTANCE.put(BASE_URL + RESOURCE + "/" + id, null)
+                .body(jsonBody, StandardCharsets.UTF_8)
+                .header(Map.of("Content-Type", "application/json"))
+                .responseString(new Handler<String>() {
+                    @Override
+                    public void success(String response) {
+                        Movie result = gson.fromJson(response, Movie.class);
+                        callback.onSuccess(result);
+                    }
+                    @Override
+                    public void failure(FuelError error) {
+                        callback.onError(error.getMessage());
+                    }
+                });
+    }
+
+    public static void deleteMovie(String id, ApiCallback<Void> callback) {
+        Fuel.INSTANCE.delete(BASE_URL + RESOURCE + "/" + id, null)
+                .responseString(new Handler<String>() {
+                    @Override
+                    public void success(String response) {
+                        callback.onSuccess(null);
+                    }
+                    @Override
+                    public void failure(FuelError error) {
+                        callback.onError(error.getMessage());
+                    }
+                });
+    }
+
     // --- Bagian Saved Movie ---
 
     public static void saveMovie(Movie movie, String userId, ApiCallback<Movie> callback) {
