@@ -17,9 +17,6 @@ public class Movie implements Serializable {
     @SerializedName("gambar_poster")
     private String gambarPoster;
 
-    @SerializedName("gambar_sampul")
-    private String gambarSampul;
-
     @SerializedName("tanggal_rilis")
     private long tanggalRilis;
 
@@ -28,9 +25,6 @@ public class Movie implements Serializable {
 
     @SerializedName("kategori")
     private String kategori;
-
-    @SerializedName("url_trailer")
-    private String urlTrailer;
 
     @SerializedName("userId")
     private String userId;
@@ -52,16 +46,12 @@ public class Movie implements Serializable {
     public void setRingkasan(String ringkasan) { this.ringkasan = ringkasan; }
     public String getGambarPoster() { return gambarPoster; }
     public void setGambarPoster(String gambarPoster) { this.gambarPoster = gambarPoster; }
-    public String getGambarSampul() { return gambarSampul; }
-    public void setGambarSampul(String gambarSampul) { this.gambarSampul = gambarSampul; }
     public long getTanggalRilis() { return tanggalRilis; }
     public void setTanggalRilis(long tanggalRilis) { this.tanggalRilis = tanggalRilis; }
     public String getSkorRating() { return skorRating; }
     public void setSkorRating(String skorRating) { this.skorRating = skorRating; }
     public String getKategori() { return kategori; }
     public void setKategori(String kategori) { this.kategori = kategori; }
-    public String getUrlTrailer() { return urlTrailer; }
-    public void setUrlTrailer(String urlTrailer) { this.urlTrailer = urlTrailer; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 }
