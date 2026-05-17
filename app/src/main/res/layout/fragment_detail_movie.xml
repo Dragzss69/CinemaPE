@@ -14,27 +14,32 @@
             android:layout_width="match_parent"
             android:layout_height="450dp">
 
+            <!-- Gambar Poster -->
             <ImageView
                 android:id="@+id/iv_detail_poster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@color/black_card_dark" />
+                android:scaleType="centerCrop" />
 
+            <!-- Gradient transparan ke hitam agar teks putih terbaca -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_appbar_gradient"
+                android:layout_height="250dp"
                 android:layout_alignParentBottom="true"
-                android:alpha="0.8" />
+                android:background="@drawable/bg_appbar_gradient" />
 
+            <!-- Tombol Kembali -->
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                android:rotation="180"
+                android:background="@color/favorite_active"
+                android:backgroundTint="#80000000"
                 app:tint="@color/white" />
 
             <LinearLayout
@@ -52,7 +57,7 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
                     android:text="Action"
-                    android:textColor="@color/black_bg_dark"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -112,23 +117,11 @@
                 android:id="@+id/tv_detail_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingExtra="4dp"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="6dp"
                 android:text="Movie summary goes here..."
                 android:textColor="@color/text_muted"
                 android:textSize="16sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_watch_trailer"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:text="Watch Trailer"
-                android:textColor="@color/black_bg_dark"
-                app:backgroundTint="@color/orange_primary"
-                app:cornerRadius="12dp"
-                app:icon="@android:drawable/ic_media_play"
-                app:iconTint="@color/black_bg_dark" />
 
         </LinearLayout>
     </LinearLayout>

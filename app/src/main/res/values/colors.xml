@@ -3,16 +3,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Tema Orange Hitam -->
+    <!-- Tema CinemaPE: Orange & Black -->
     <color name="orange_primary">#FF8C00</color>
-    <color name="orange_primary_variant">#FF7000</color>
-    <color name="orange_accent">#FFA500</color>
-    <color name="black_bg_dark">#0C0C0C</color>
-    <color name="black_card_dark">#1A1A1A</color>
+    <color name="orange_primary_variant">#E67E00</color>
+    <color name="orange_accent">#FFB74D</color>
+
+    <color name="black_bg_dark">#080808</color>
+    <color name="black_card_dark">#121212</color>
 
     <color name="text_main">#FFFFFF</color>
     <color name="text_muted">#B0B0B0</color>
 
-    <!-- Status Favorit -->
+    <!-- Warna Ikon Favorit Aktif -->
     <color name="favorite_active">#FF8C00</color>
 </resources>

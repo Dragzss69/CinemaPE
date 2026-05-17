@@ -1,7 +1,5 @@
 package com.kelompoklima.cinemape;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,18 +49,14 @@ public class DetailMovieFragment extends Fragment {
             displayMovieDetails();
         }
 
+        // Tombol Kembali
         binding.btnBack.setOnClickListener(v -> {
             if (getParentFragmentManager() != null) {
                 getParentFragmentManager().popBackStack();
             }
         });
-
-        binding.btnWatchTrailer.setOnClickListener(v -> {
-            if (movie != null && movie.getUrlTrailer() != null && !movie.getUrlTrailer().isEmpty()) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movie.getUrlTrailer()));
-                startActivity(intent);
-            }
-        });
+        
+        // Tombol Watch Trailer dihapus sesuai permintaan
     }
 
     private void displayMovieDetails() {

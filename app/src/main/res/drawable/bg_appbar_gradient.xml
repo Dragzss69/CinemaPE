@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
+    <!-- Gradient transparan ke hitam agar gambar tidak tertutup warna orange -->
     <gradient
-        android:startColor="@color/orange_primary"
-        android:endColor="@color/orange_primary_variant"
+        android:startColor="@android:color/transparent"
+        android:endColor="@color/black_bg_dark"
         android:angle="270" />
 </shape>
