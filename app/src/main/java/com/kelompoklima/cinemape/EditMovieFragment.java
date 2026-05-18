@@ -78,23 +78,36 @@ public class EditMovieFragment extends Fragment {
      * Mengambil data baru dari form dan mengirimkan request Update ke server.
      */
     private void updateMovie() {
-        String title = binding.etEditTitle.getText().toString();
-        String category = binding.etEditCategory.getText().toString();
-        String rating = binding.etEditRating.getText().toString();
-        String poster = binding.etEditPoster.getText().toString();
-        String trailer = binding.etEditTrailer.getText().toString();
-        String description = binding.etEditDescription.getText().toString();
+        String title = binding.etEditTitle.getText().toString().trim();
+        String category = binding.etEditCategory.getText().toString().trim();
+        String ratingStr = binding.etEditRating.getText().toString().trim();
+        String poster = binding.etEditPoster.getText().toString().trim();
+        String trailer = binding.etEditTrailer.getText().toString().trim();
+        String description = binding.etEditDescription.getText().toString().trim();
 
-        // Validasi input
-        if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(getContext(), "Judul dan Ringkasan wajib diisi", Toast.LENGTH_SHORT).show();
+        // Validasi: Cek apakah ada form yang kosong
+        if (title.isEmpty() || category.isEmpty() || ratingStr.isEmpty() || 
+            poster.isEmpty() || trailer.isEmpty() || description.isEmpty()) {
+            Toast.makeText(getContext(), "Harap isi semua data form, jangan dikosongkan!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validasi Rating: Harus angka antara 0 - 10
+        try {
+            double ratingValue = Double.parseDouble(ratingStr);
+            if (ratingValue < 0 || ratingValue > 10) {
+                Toast.makeText(getContext(), "Rating harus antara 0 sampai 10", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Rating harus berupa angka", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Update atribut objek movie
         movie.setJudul(title);
         movie.setKategori(category);
-        movie.setSkorRating(rating);
+        movie.setSkorRating(ratingStr);
         movie.setGambarPoster(poster);
         movie.setUrlTrailer(trailer);
         movie.setRingkasan(description);

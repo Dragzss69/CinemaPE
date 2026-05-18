@@ -59,16 +59,29 @@ public class AddMovieFragment extends Fragment {
      * Mengambil data dari form dan mengirimkannya ke MockAPI melalui ApiService.
      */
     private void saveNewMovie() {
-        String title = binding.etAddTitle.getText().toString();
-        String category = binding.etAddCategory.getText().toString();
-        String rating = binding.etAddRating.getText().toString();
-        String poster = binding.etAddPoster.getText().toString();
-        String trailer = binding.etAddTrailer.getText().toString();
-        String description = binding.etAddDescription.getText().toString();
+        String title = binding.etAddTitle.getText().toString().trim();
+        String category = binding.etAddCategory.getText().toString().trim();
+        String ratingStr = binding.etAddRating.getText().toString().trim();
+        String poster = binding.etAddPoster.getText().toString().trim();
+        String trailer = binding.etAddTrailer.getText().toString().trim();
+        String description = binding.etAddDescription.getText().toString().trim();
 
-        // Validasi input minimal
-        if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(getContext(), "Judul dan Ringkasan wajib diisi", Toast.LENGTH_SHORT).show();
+        // Validasi: Cek apakah ada form yang masih kosong
+        if (title.isEmpty() || category.isEmpty() || ratingStr.isEmpty() || 
+            poster.isEmpty() || trailer.isEmpty() || description.isEmpty()) {
+            Toast.makeText(getContext(), "Harap isi semua data form, jangan dikosongkan!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validasi Rating: Harus angka antara 0 - 10
+        try {
+            double ratingValue = Double.parseDouble(ratingStr);
+            if (ratingValue < 0 || ratingValue > 10) {
+                Toast.makeText(getContext(), "Rating harus antara 0 sampai 10", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Rating harus berupa angka", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -76,7 +89,7 @@ public class AddMovieFragment extends Fragment {
         Movie movieBaru = new Movie();
         movieBaru.setJudul(title);
         movieBaru.setKategori(category);
-        movieBaru.setSkorRating(rating);
+        movieBaru.setSkorRating(ratingStr);
         movieBaru.setGambarPoster(poster);
         movieBaru.setUrlTrailer(trailer);
         movieBaru.setRingkasan(description);
