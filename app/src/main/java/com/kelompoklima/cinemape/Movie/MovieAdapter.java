@@ -90,12 +90,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         holder.tvRating.setText("⭐ " + movie.getSkorRating());
         holder.tvCategory.setText(movie.getKategori());
 
-        // Format tanggal dari Timestamp (long) ke format dd MMM yyyy
-        if (movie.getTanggalRilis() > 0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(movie.getTanggalRilis() * 1000L));
-            holder.tvReleaseDate.setText("Rilis: " + formattedDate);
-            holder.tvReleaseDate.setVisibility(View.VISIBLE);
+        // Format tanggal dari Timestamp (String) ke format dd MMM yyyy
+        String tanggalRilisStr = movie.getTanggalRilis();
+        if (tanggalRilisStr != null && !tanggalRilisStr.isEmpty()) {
+            try {
+                long timestamp = Long.parseLong(tanggalRilisStr);
+                if (timestamp > 0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                    String formattedDate = sdf.format(new Date(timestamp * 1000L));
+                    holder.tvReleaseDate.setText("Rilis: " + formattedDate);
+                    holder.tvReleaseDate.setVisibility(View.VISIBLE);
+                } else {
+                    holder.tvReleaseDate.setVisibility(View.GONE);
+                }
+            } catch (NumberFormatException e) {
+                holder.tvReleaseDate.setVisibility(View.GONE);
+            }
         } else {
             holder.tvReleaseDate.setVisibility(View.GONE);
         }

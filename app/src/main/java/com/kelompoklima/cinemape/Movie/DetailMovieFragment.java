@@ -158,18 +158,24 @@ public class DetailMovieFragment extends Fragment {
         binding.tvDetailMovieId.setText("#" + movie.getId());
 
         // Mengolah data tanggal rilis
-        if (movie.getTanggalRilis() > 0) {
-            Date date = new Date(movie.getTanggalRilis() * 1000L);
-            
-            // Format tanggal lengkap
-            SimpleDateFormat fullSdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-            binding.tvDetailFullDate.setText(fullSdf.format(date));
+        try {
+            long timestamp = Long.parseLong(movie.getTanggalRilis());
+            if (timestamp > 0) {
+                Date date = new Date(timestamp * 1000L);
+                
+                // Format tanggal lengkap
+                SimpleDateFormat fullSdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+                binding.tvDetailFullDate.setText(fullSdf.format(date));
 
-            // Mendapatkan tahun saja
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            binding.tvDetailReleaseYear.setText(String.valueOf(calendar.get(Calendar.YEAR)));
-        } else {
+                // Mendapatkan tahun saja
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                binding.tvDetailReleaseYear.setText(String.valueOf(calendar.get(Calendar.YEAR)));
+            } else {
+                binding.tvDetailFullDate.setText("-");
+                binding.tvDetailReleaseYear.setText("-");
+            }
+        } catch (Exception e) {
             binding.tvDetailFullDate.setText("-");
             binding.tvDetailReleaseYear.setText("-");
         }

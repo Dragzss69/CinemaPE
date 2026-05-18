@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.kelompoklima.cinemape.API.ApiService;
 import com.kelompoklima.cinemape.Model.Movie;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.FragmentEditMovieBinding;
 
 /**
@@ -21,6 +22,7 @@ public class EditMovieFragment extends Fragment {
 
     private FragmentEditMovieBinding binding; // Akses komponen UI
     private Movie movie; // Objek film yang sedang diedit
+    private SessionManager sessionManager;
 
     /**
      * Metode static untuk membuat instance fragment baru dengan mengirim data Movie.
@@ -52,6 +54,8 @@ public class EditMovieFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        sessionManager = new SessionManager(requireContext());
 
         // Jika data movie ada, isi form dengan data tersebut (pre-fill)
         if (movie != null) {
@@ -88,23 +92,24 @@ public class EditMovieFragment extends Fragment {
         String trailer = binding.etEditTrailer.getText().toString().trim();
         String description = binding.etEditDescription.getText().toString().trim();
 
-        // Validasi: Cek apakah ada form yang kosong
-        if (title.isEmpty() || category.isEmpty() || ratingStr.isEmpty() || 
-            poster.isEmpty() || trailer.isEmpty() || description.isEmpty()) {
-            Toast.makeText(getContext(), "Harap isi semua data form, jangan dikosongkan!", Toast.LENGTH_SHORT).show();
+        // Validasi: Sekarang hanya Judul yang wajib diisi
+        if (title.isEmpty()) {
+            Toast.makeText(getContext(), "Judul tidak boleh kosong!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validasi Rating: Harus angka antara 0 - 10
-        try {
-            double ratingValue = Double.parseDouble(ratingStr);
-            if (ratingValue < 0 || ratingValue > 10) {
-                Toast.makeText(getContext(), "Rating harus antara 0 sampai 10", Toast.LENGTH_SHORT).show();
+        // Validasi Rating: Hanya divalidasi jika user memasukkan nilai
+        if (!ratingStr.isEmpty()) {
+            try {
+                double ratingValue = Double.parseDouble(ratingStr);
+                if (ratingValue < 0 || ratingValue > 10) {
+                    Toast.makeText(getContext(), "Rating harus antara 0 sampai 10", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Rating harus berupa angka", Toast.LENGTH_SHORT).show();
                 return;
             }
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Rating harus berupa angka", Toast.LENGTH_SHORT).show();
-            return;
         }
 
         // Update atribut objek movie
@@ -120,6 +125,9 @@ public class EditMovieFragment extends Fragment {
             @Override
             public void onSuccess(Movie result) {
                 if (isAdded()) {
+                    // Update juga di list favorit lokal agar sinkron
+                    sessionManager.updateMovieLocally(result);
+
                     Toast.makeText(getContext(), "Movie berhasil diperbarui!", Toast.LENGTH_SHORT).show();
                     // Kembali ke halaman sebelumnya setelah sukses
                     getParentFragmentManager().popBackStack();

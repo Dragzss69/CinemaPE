@@ -15,9 +15,9 @@
         android:theme="@style/Theme.CinemaPE"
         android:usesCleartextTraffic="true">
 
-        <!-- LoginActivity diatur sebagai LAUNCHER (halaman pertama saat dibuka) -->
+        <!-- SplashActivity diatur sebagai LAUNCHER -->
         <activity
-            android:name=".Autentikasi.LoginActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Autentikasi.LoginActivity" />
         <activity android:name=".Autentikasi.RegisterActivity" />
         <activity android:name=".MainActivity" />
     </application>

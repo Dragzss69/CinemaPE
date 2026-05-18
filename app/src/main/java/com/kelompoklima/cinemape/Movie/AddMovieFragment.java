@@ -98,7 +98,7 @@ public class AddMovieFragment extends Fragment {
         movieBaru.setGambarPoster(poster);
         movieBaru.setUrlTrailer(trailer);
         movieBaru.setRingkasan(description);
-        movieBaru.setTanggalRilis(System.currentTimeMillis() / 1000); // Waktu sekarang (Timestamp)
+        movieBaru.setTanggalRilis(String.valueOf(System.currentTimeMillis() / 1000)); // Waktu sekarang (Timestamp)
         movieBaru.setUserId(currentUsername); // Kaitkan film ini dengan user yang login
 
         // Panggil API untuk menyimpan data

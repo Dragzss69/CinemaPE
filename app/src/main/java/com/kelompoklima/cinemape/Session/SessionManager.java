@@ -144,4 +144,24 @@ public class SessionManager {
 
         return !isAlreadySaved; // Mengembalikan true jika akhirnya disimpan
     }
+
+    /**
+     * Memperbarui data film di list favorit lokal jika film tersebut ada.
+     */
+    public void updateMovieLocally(Movie updatedMovie) {
+        List<Movie> savedMovies = getSavedMoviesLocally();
+        boolean found = false;
+        for (int i = 0; i < savedMovies.size(); i++) {
+            if (savedMovies.get(i).getId().equals(updatedMovie.getId())) {
+                savedMovies.set(i, updatedMovie);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            String json = gson.toJson(savedMovies);
+            editor.putString(getSavedMoviesKey(), json);
+            editor.apply();
+        }
+    }
 }
