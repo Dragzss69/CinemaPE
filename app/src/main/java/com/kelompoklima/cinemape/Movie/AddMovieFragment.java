@@ -19,22 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * AddMovieFragment mengelola fitur penambahan film baru oleh user.
- * Film yang ditambahkan akan dikaitkan dengan username yang sedang login.
- */
 public class AddMovieFragment extends Fragment {
 
-    private FragmentAddMovieBinding binding; // Akses komponen UI
-    private MovieAdapter adapter; // Menampilkan daftar film yang dibuat oleh user sendiri
-    private List<Movie> myAddedMovies = new ArrayList<>(); // List lokal untuk film milik user
+    private FragmentAddMovieBinding binding;
+    private MovieAdapter adapter;
+    private List<Movie> myAddedMovies = new ArrayList<>();
     private SessionManager sessionManager;
-    private String currentUsername; // Menyimpan username yang sedang login
+    private String currentUsername;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Menginisialisasi layout menggunakan View Binding
         binding = FragmentAddMovieBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -47,22 +42,16 @@ public class AddMovieFragment extends Fragment {
         currentUsername = sessionManager.getUsername();
 
         setupRecyclerView();
-        fetchMyMovies(); // Ambil data film milik user dari server
+        fetchMyMovies();
 
-        // Listener untuk menampilkan form tambah film
         binding.ivAddPlaceholder.setOnClickListener(v -> showForm());
         binding.fabAddMovie.setOnClickListener(v -> showForm());
-        
-        // Listener untuk membatalkan pengisian form
+
         binding.btnCancelAdd.setOnClickListener(v -> hideForm());
 
-        // Listener untuk menyimpan film baru ke server
         binding.btnSaveMovie.setOnClickListener(v -> saveNewMovie());
     }
 
-    /**
-     * Mengambil data dari form dan mengirimkannya ke MockAPI melalui ApiService.
-     */
     private void saveNewMovie() {
         String title = binding.etAddTitle.getText().toString().trim();
         String category = binding.etAddCategory.getText().toString().trim();
@@ -71,14 +60,12 @@ public class AddMovieFragment extends Fragment {
         String trailer = binding.etAddTrailer.getText().toString().trim();
         String description = binding.etAddDescription.getText().toString().trim();
 
-        // Validasi: Cek apakah ada form yang masih kosong
         if (title.isEmpty() || category.isEmpty() || ratingStr.isEmpty() || 
             poster.isEmpty() || trailer.isEmpty() || description.isEmpty()) {
             Toast.makeText(getContext(), "Harap isi semua data form, jangan dikosongkan!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validasi Rating: Harus angka antara 0 - 10
         try {
             double ratingValue = Double.parseDouble(ratingStr);
             if (ratingValue < 0 || ratingValue > 10) {
@@ -90,7 +77,6 @@ public class AddMovieFragment extends Fragment {
             return;
         }
 
-        // Membuat objek Movie baru dengan data dari form
         Movie movieBaru = new Movie();
         movieBaru.setJudul(title);
         movieBaru.setKategori(category);
@@ -98,18 +84,17 @@ public class AddMovieFragment extends Fragment {
         movieBaru.setGambarPoster(poster);
         movieBaru.setUrlTrailer(trailer);
         movieBaru.setRingkasan(description);
-        movieBaru.setTanggalRilis(String.valueOf(System.currentTimeMillis() / 1000)); // Waktu sekarang (Timestamp)
-        movieBaru.setUserId(currentUsername); // Kaitkan film ini dengan user yang login
+        movieBaru.setTanggalRilis(String.valueOf(System.currentTimeMillis() / 1000));
+        movieBaru.setUserId(currentUsername);
 
-        // Panggil API untuk menyimpan data
         ApiService.createMovie(movieBaru, new ApiService.ApiCallback<Movie>() {
             @Override
             public void onSuccess(Movie result) {
                 if (isAdded()) {
                     Toast.makeText(getContext(), "Movie berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
-                    clearForm(); // Bersihkan isi form
-                    fetchMyMovies(); // Refresh daftar film
-                    hideForm(); // Kembali ke tampilan list
+                    clearForm();
+                    fetchMyMovies();
+                    hideForm();
                 }
             }
 
@@ -122,9 +107,6 @@ public class AddMovieFragment extends Fragment {
         });
     }
 
-    /**
-     * Inisialisasi daftar film yang ditampilkan.
-     */
     private void setupRecyclerView() {
         adapter = new MovieAdapter();
         binding.rvAddedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -132,14 +114,12 @@ public class AddMovieFragment extends Fragment {
 
         updateSavedStateInAdapter();
 
-        // Klik pada ikon favorit
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             Toast.makeText(getContext(), isSaved ? "Disimpan" : "Dihapus", Toast.LENGTH_SHORT).show();
             updateSavedStateInAdapter();
         });
 
-        // Klik pada item untuk melihat detail
         adapter.setOnItemClickListener(movie -> {
             DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -149,9 +129,6 @@ public class AddMovieFragment extends Fragment {
         });
     }
 
-    /**
-     * Memastikan ikon favorit tetap sinkron dengan data lokal.
-     */
     private void updateSavedStateInAdapter() {
         List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
         List<String> savedIds = new ArrayList<>();
@@ -161,15 +138,11 @@ public class AddMovieFragment extends Fragment {
         adapter.setSavedMovieIds(savedIds);
     }
 
-    /**
-     * Mengambil daftar film dari server dan memfilternya hanya untuk user yang sedang login.
-     */
     private void fetchMyMovies() {
         ApiService.getAllMovie(new ApiService.ApiCallback<List<Movie>>() {
             @Override
             public void onSuccess(List<Movie> result) {
                 if (isAdded()) {
-                    // Filter: Hanya tampilkan film yang memiliki userId sama dengan user yang login
                     myAddedMovies = result.stream()
                             .filter(movie -> currentUsername != null && currentUsername.equals(movie.getUserId()))
                             .collect(Collectors.toList());
@@ -184,9 +157,6 @@ public class AddMovieFragment extends Fragment {
         });
     }
 
-    /**
-     * Mengatur visibilitas UI (Empty State vs List State).
-     */
     private void updateUIState() {
         if (binding == null) return;
         binding.layoutForm.setVisibility(View.GONE);

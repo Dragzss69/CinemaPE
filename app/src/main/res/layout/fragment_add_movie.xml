@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/black_bg_dark">
 
-    <!-- State 1: List Movie yang telah ditambahkan -->
     <LinearLayout
         android:id="@+id/layout_list_state"
         android:layout_width="match_parent"
@@ -30,7 +29,6 @@
             android:paddingBottom="80dp" />
     </LinearLayout>
 
-    <!-- State 2: Tampilan Kosong (Placeholder) -->
     <LinearLayout
         android:id="@+id/layout_empty_state"
         android:layout_width="match_parent"
@@ -67,7 +65,6 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- State 3: Form Input Movie -->
     <ScrollView
         android:id="@+id/layout_form"
         android:layout_width="match_parent"
@@ -230,7 +227,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Floating Action Button untuk tambah movie saat list sudah ada -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_movie"
         android:layout_width="wrap_content"

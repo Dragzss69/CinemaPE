@@ -13,7 +13,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Menampilkan Splash Screen selama 3 detik (3000 ms)
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);

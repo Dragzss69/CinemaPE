@@ -18,7 +18,7 @@ public class Movie implements Serializable {
     private String gambarPoster;
 
     @SerializedName("tanggal_rilis")
-    private String tanggalRilis; // Diubah ke String untuk menghindari NumberFormatException
+    private String tanggalRilis;
 
     @SerializedName("skor_rating")
     private String skorRating;

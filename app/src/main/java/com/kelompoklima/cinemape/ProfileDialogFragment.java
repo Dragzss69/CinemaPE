@@ -14,26 +14,20 @@ import com.kelompoklima.cinemape.Autentikasi.LoginActivity;
 import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.LayoutProfileDialogBinding;
 
-/**
- * ProfileDialogFragment menampilkan jendela pop-up (dialog) informasi profil pengguna.
- * Di sini user bisa melihat username yang sedang login dan melakukan Logout.
- */
 public class ProfileDialogFragment extends DialogFragment {
 
-    private LayoutProfileDialogBinding binding; // Akses UI menggunakan View Binding
+    private LayoutProfileDialogBinding binding;
     private SessionManager sessionManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Mengatur gaya dialog agar tidak memiliki judul bawaan dan menggunakan tema kustom
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomDialog);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate layout layout_profile_dialog.xml
         binding = LayoutProfileDialogBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -44,27 +38,21 @@ public class ProfileDialogFragment extends DialogFragment {
 
         sessionManager = new SessionManager(requireContext());
 
-        // 1. Ambil username dari session dan tampilkan di layar
         String username = sessionManager.getUsername();
         if (username != null) {
             binding.tvUsername.setText(username);
         }
 
-        // 2. Logika tombol Logout
         binding.btnLogout.setOnClickListener(v -> {
-            // Hapus status login di SharedPreferences
             sessionManager.logout();
             Toast.makeText(getContext(), "Berhasil Logout: " + username, Toast.LENGTH_SHORT).show();
-            
-            // Arahkan kembali ke halaman Login dan bersihkan tumpukan halaman (clear task)
+
             Intent intent = new Intent(requireContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            
-            // Tutup dialog
+
             dismiss();
-            
-            // Tutup activity utama agar benar-benar keluar
+
             if (getActivity() != null) {
                 getActivity().finish();
             }
@@ -74,6 +62,6 @@ public class ProfileDialogFragment extends DialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Mencegah kebocoran memori (memory leak)
+        binding = null;
     }
 }

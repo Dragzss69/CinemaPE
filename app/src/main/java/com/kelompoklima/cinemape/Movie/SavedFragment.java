@@ -17,10 +17,6 @@ import com.kelompoklima.cinemape.databinding.FragmentSavedBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * SavedFragment menampilkan daftar film yang telah disimpan ke favorit oleh user.
- * Data diambil secara lokal dari SharedPreferences melalui SessionManager.
- */
 public class SavedFragment extends Fragment {
 
     private FragmentSavedBinding binding;
@@ -30,7 +26,6 @@ public class SavedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate layout fragment_saved.xml menggunakan View Binding
         binding = FragmentSavedBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -41,27 +36,22 @@ public class SavedFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         setupRecyclerView();
-        loadSavedMoviesLocal(); // Memuat data saat fragment pertama kali dibuat
+        loadSavedMoviesLocal();
     }
 
-    /**
-     * Konfigurasi RecyclerView: Adapter, LayoutManager, dan Klik Listener.
-     */
     private void setupRecyclerView() {
         adapter = new MovieAdapter();
         binding.rvSavedMovies.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvSavedMovies.setAdapter(adapter);
 
-        // 1. Listener untuk menghapus film dari daftar favorit (ikon save diklik)
         adapter.setOnSaveClickListener(movie -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
             if (!isSaved) {
                 Toast.makeText(getContext(), "Dihapus dari favorit", Toast.LENGTH_SHORT).show();
-                loadSavedMoviesLocal(); // Refresh list agar item yang dihapus hilang dari layar
+                loadSavedMoviesLocal();
             }
         });
 
-        // 2. Listener untuk klik pada item film (buka halaman Detail Movie)
         adapter.setOnItemClickListener(movie -> {
             DetailMovieFragment detailFragment = DetailMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -71,18 +61,13 @@ public class SavedFragment extends Fragment {
         });
     }
 
-    /**
-     * Mengambil data favorit dari SharedPreferences dan menampilkannya ke UI.
-     */
     private void loadSavedMoviesLocal() {
         List<Movie> savedMovies = sessionManager.getSavedMoviesLocally();
-        
-        // Mengirimkan daftar ID favorit ke adapter agar pewarnaan ikon sesuai
+
         List<String> savedIds = new ArrayList<>();
         for (Movie m : savedMovies) savedIds.add(m.getId());
         adapter.setSavedMovieIds(savedIds);
 
-        // Jika tidak ada film yang disimpan, tampilkan layout kosong
         if (savedMovies == null || savedMovies.isEmpty()) {
             binding.layoutEmptySaved.setVisibility(View.VISIBLE);
             binding.rvSavedMovies.setVisibility(View.GONE);
@@ -96,7 +81,6 @@ public class SavedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh data setiap kali user masuk kembali ke fragment ini
         loadSavedMoviesLocal();
     }
 

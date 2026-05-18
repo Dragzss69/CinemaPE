@@ -14,19 +14,12 @@ import com.kelompoklima.cinemape.Model.Movie;
 import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.FragmentEditMovieBinding;
 
-/**
- * EditMovieFragment mengelola fitur untuk mengubah data film yang sudah ada.
- * Menerima objek Movie yang akan diedit melalui Bundle.
- */
 public class EditMovieFragment extends Fragment {
 
-    private FragmentEditMovieBinding binding; // Akses komponen UI
-    private Movie movie; // Objek film yang sedang diedit
+    private FragmentEditMovieBinding binding;
+    private Movie movie;
     private SessionManager sessionManager;
 
-    /**
-     * Metode static untuk membuat instance fragment baru dengan mengirim data Movie.
-     */
     public static EditMovieFragment newInstance(Movie movie) {
         EditMovieFragment fragment = new EditMovieFragment();
         Bundle args = new Bundle();
@@ -38,7 +31,6 @@ public class EditMovieFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Mengambil data film dari argumen yang dikirim saat newInstance
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable("movie");
         }
@@ -57,21 +49,15 @@ public class EditMovieFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
 
-        // Jika data movie ada, isi form dengan data tersebut (pre-fill)
         if (movie != null) {
             prefillData();
         }
 
-        // Tombol kembali ke halaman sebelumnya
         binding.btnBackEdit.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
-        // Tombol untuk mengirim pembaruan ke server
         binding.btnUpdateMovie.setOnClickListener(v -> updateMovie());
     }
 
-    /**
-     * Mengisi kolom input di form dengan data film yang lama.
-     */
     private void prefillData() {
         binding.etEditTitle.setText(movie.getJudul());
         binding.etEditCategory.setText(movie.getKategori());
@@ -81,9 +67,6 @@ public class EditMovieFragment extends Fragment {
         binding.etEditDescription.setText(movie.getRingkasan());
     }
 
-    /**
-     * Mengambil data baru dari form dan mengirimkan request Update ke server.
-     */
     private void updateMovie() {
         String title = binding.etEditTitle.getText().toString().trim();
         String category = binding.etEditCategory.getText().toString().trim();
@@ -92,13 +75,11 @@ public class EditMovieFragment extends Fragment {
         String trailer = binding.etEditTrailer.getText().toString().trim();
         String description = binding.etEditDescription.getText().toString().trim();
 
-        // Validasi: Sekarang hanya Judul yang wajib diisi
         if (title.isEmpty()) {
             Toast.makeText(getContext(), "Judul tidak boleh kosong!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validasi Rating: Hanya divalidasi jika user memasukkan nilai
         if (!ratingStr.isEmpty()) {
             try {
                 double ratingValue = Double.parseDouble(ratingStr);
@@ -112,7 +93,6 @@ public class EditMovieFragment extends Fragment {
             }
         }
 
-        // Update atribut objek movie
         movie.setJudul(title);
         movie.setKategori(category);
         movie.setSkorRating(ratingStr);
@@ -120,16 +100,13 @@ public class EditMovieFragment extends Fragment {
         movie.setUrlTrailer(trailer);
         movie.setRingkasan(description);
 
-        // Panggil ApiService untuk melakukan request PUT ke server
         ApiService.updateMovie(movie.getId(), movie, new ApiService.ApiCallback<Movie>() {
             @Override
             public void onSuccess(Movie result) {
                 if (isAdded()) {
-                    // Update juga di list favorit lokal agar sinkron
                     sessionManager.updateMovieLocally(result);
 
                     Toast.makeText(getContext(), "Movie berhasil diperbarui!", Toast.LENGTH_SHORT).show();
-                    // Kembali ke halaman sebelumnya setelah sukses
                     getParentFragmentManager().popBackStack();
                 }
             }

@@ -58,7 +58,6 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Title and Genre -->
             <TextView
                 android:id="@+id/tv_detail_title"
                 style="@style/TextAppearance.Material3.HeadlineLarge"
@@ -79,7 +78,6 @@
                 app:chipStrokeWidth="0dp"
                 tools:text="Drama / History" />
 
-            <!-- Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,7 +157,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Action Button -->
             <Button
                 android:id="@+id/btn_watch_trailer"
                 style="@style/Widget.Material3.Button"
@@ -174,7 +171,6 @@
                 app:iconGravity="textStart"
                 app:iconTint="@color/black" />
 
-            <!-- Synopsis Section -->
             <TextView
                 style="@style/TextAppearance.Material3.TitleLarge"
                 android:layout_width="match_parent"
@@ -194,7 +190,6 @@
                 android:textColor="@color/text_muted"
                 tools:text="The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb." />
 
-            <!-- Info Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -246,7 +241,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Admin Actions -->
             <LinearLayout
                 android:id="@+id/layout_owner_actions"
                 android:layout_width="match_parent"

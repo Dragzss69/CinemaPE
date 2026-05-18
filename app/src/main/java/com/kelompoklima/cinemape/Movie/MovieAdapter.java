@@ -22,23 +22,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * MovieAdapter adalah penghubung antara data List<Movie> dengan tampilan RecyclerView.
- * Mengatur bagaimana setiap item film ditampilkan di dalam daftar.
- */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movieList = new ArrayList<>();
-    private Set<String> savedMovieIds = new HashSet<>(); // Menyimpan ID film yang difavoritkan untuk pewarnaan ikon
+    private Set<String> savedMovieIds = new HashSet<>();
     private OnSaveClickListener onSaveClickListener;
     private OnItemClickListener onItemClickListener;
 
-    // Interface untuk menangani klik pada tombol save/favorit
     public interface OnSaveClickListener {
         void onSaveClick(Movie movie);
     }
 
-    // Interface untuk menangani klik pada baris item (buka detail)
     public interface OnItemClickListener {
         void onItemClick(Movie movie);
     }
@@ -51,25 +45,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         this.onItemClickListener = listener;
     }
 
-    /**
-     * Memasukkan data film ke adapter dan memperbarui tampilan.
-     */
     public void setMovieList(List<Movie> movieList) {
         this.movieList = movieList;
-        notifyDataSetChanged(); // Memberitahu RecyclerView bahwa data berubah
+        notifyDataSetChanged();
     }
 
-    /**
-     * Mengatur daftar ID film yang sudah difavoritkan oleh user.
-     */
     public void setSavedMovieIds(List<String> savedIds) {
         this.savedMovieIds = new HashSet<>(savedIds);
         notifyDataSetChanged();
     }
 
-    /**
-     * Membuat tampilan layout per item (item_movie.xml).
-     */
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -77,20 +62,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return new MovieViewHolder(view);
     }
 
-    /**
-     * Memasukkan data dari objek Movie ke elemen UI (TextView, ImageView, dll).
-     */
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
-        
-        // Mengisi teks data film
+
         holder.tvTitle.setText(movie.getJudul());
         holder.tvDescription.setText(movie.getRingkasan());
         holder.tvRating.setText("⭐ " + movie.getSkorRating());
         holder.tvCategory.setText(movie.getKategori());
 
-        // Format tanggal dari Timestamp (String) ke format dd MMM yyyy
         String tanggalRilisStr = movie.getTanggalRilis();
         if (tanggalRilisStr != null && !tanggalRilisStr.isEmpty()) {
             try {
@@ -110,28 +90,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             holder.tvReleaseDate.setVisibility(View.GONE);
         }
 
-        // Memuat gambar dari URL menggunakan library Glide
         Glide.with(holder.itemView.getContext())
                 .load(movie.getGambarPoster())
                 .placeholder(android.R.drawable.progress_horizontal)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.ivPoster);
 
-        // Update warna icon favorit: Orange jika tersimpan, Putih jika tidak
         if (savedMovieIds.contains(movie.getId())) {
             ImageViewCompat.setImageTintList(holder.ivSaveMovie, ColorStateList.valueOf(Color.parseColor("#FF8C00")));
         } else {
             ImageViewCompat.setImageTintList(holder.ivSaveMovie, ColorStateList.valueOf(Color.WHITE));
         }
 
-        // Event Klik: Tombol Simpan
         holder.ivSaveMovie.setOnClickListener(v -> {
             if (onSaveClickListener != null) {
                 onSaveClickListener.onSaveClick(movie);
             }
         });
 
-        // Event Klik: Seluruh item (masuk detail)
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(movie);
@@ -144,9 +120,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movieList.size();
     }
 
-    /**
-     * ViewHolder bertugas memegang referensi ke elemen-elemen UI dalam satu item.
-     */
     static class MovieViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDescription, tvRating, tvCategory, tvReleaseDate;
         ImageView ivPoster, ivSaveMovie;
