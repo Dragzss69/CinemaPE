@@ -1,5 +1,7 @@
 package com.kelompoklima.cinemape;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.kelompoklima.cinemape.databinding.FragmentDetailMovieBinding;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -49,21 +52,27 @@ public class DetailMovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupToolbar();
+
         if (movie != null) {
             displayMovieDetails();
             
             // Tampilkan tombol Edit & Hapus (CRUD)
-            // Saya buat agar selalu muncul agar Anda bisa testing CRUD
             binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
-        binding.btnBack.setOnClickListener(v -> {
-            if (getParentFragmentManager() != null) {
-                getParentFragmentManager().popBackStack();
+        // Tombol Watch Trailer - Diarahkan ke link statis sesuai permintaan
+        binding.btnWatchTrailer.setOnClickListener(v -> {
+            String trailerUrl = "https://share.google/lKbJO7YsTYEf93481";
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Gagal membuka link trailer", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Tombol Edit (Pindah ke Fragment Terpisah)
+        // Tombol Edit
         binding.btnEditMovie.setOnClickListener(v -> {
             EditMovieFragment editFragment = EditMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -72,14 +81,22 @@ public class DetailMovieFragment extends Fragment {
                     .commit();
         });
 
-        // Tombol Hapus (Fungsi Terpisah)
+        // Tombol Hapus
         binding.btnDeleteMovie.setOnClickListener(v -> showDeleteConfirmation());
+    }
+
+    private void setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
     }
 
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Movie")
-                .setMessage("Apakah Anda yakin ingin menghapus movie ini dari API?")
+                .setMessage("Apakah Anda yakin ingin menghapus movie ini?")
                 .setPositiveButton("Hapus", (dialog, which) -> deleteMovie())
                 .setNegativeButton("Batal", null)
                 .show();
@@ -106,14 +123,25 @@ public class DetailMovieFragment extends Fragment {
 
     private void displayMovieDetails() {
         binding.tvDetailTitle.setText(movie.getJudul());
-        binding.tvDetailCategory.setText(movie.getKategori());
+        binding.chipCategory.setText(movie.getKategori());
         binding.tvDetailRating.setText("⭐ " + movie.getSkorRating());
         binding.tvDetailDescription.setText(movie.getRingkasan());
+        binding.tvDetailMovieId.setText("#" + movie.getId());
 
         if (movie.getTanggalRilis() > 0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(movie.getTanggalRilis() * 1000L));
-            binding.tvDetailRelease.setText("Released: " + formattedDate);
+            Date date = new Date(movie.getTanggalRilis() * 1000L);
+            
+            // Full Date untuk info section
+            SimpleDateFormat fullSdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+            binding.tvDetailFullDate.setText(fullSdf.format(date));
+
+            // Year untuk stats row
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            binding.tvDetailReleaseYear.setText(String.valueOf(calendar.get(Calendar.YEAR)));
+        } else {
+            binding.tvDetailFullDate.setText("-");
+            binding.tvDetailReleaseYear.setText("-");
         }
 
         Glide.with(this)

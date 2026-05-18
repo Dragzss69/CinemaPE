@@ -57,6 +57,11 @@ public class Movie implements Serializable {
     public void setKategori(String kategori) { this.kategori = kategori; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
-    public String getUrlTrailer() { return urlTrailer; }
+    
+    // Trailer URL diatur secara statis sesuai permintaan user
+    public String getUrlTrailer() { 
+        return "https://share.google/lKbJO7YsTYEf93481"; 
+    }
+
     public void setUrlTrailer(String urlTrailer) { this.urlTrailer = urlTrailer; }
 }
