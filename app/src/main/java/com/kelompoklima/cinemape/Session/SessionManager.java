@@ -1,9 +1,11 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Session;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kelompoklima.cinemape.Model.Movie;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

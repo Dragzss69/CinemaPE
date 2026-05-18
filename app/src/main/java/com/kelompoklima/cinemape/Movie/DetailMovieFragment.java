@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Movie;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
+import com.kelompoklima.cinemape.API.ApiService;
+import com.kelompoklima.cinemape.Model.Movie;
+import com.kelompoklima.cinemape.R;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.FragmentDetailMovieBinding;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

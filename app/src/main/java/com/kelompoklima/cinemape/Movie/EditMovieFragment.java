@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Movie;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.kelompoklima.cinemape.API.ApiService;
+import com.kelompoklima.cinemape.Model.Movie;
 import com.kelompoklima.cinemape.databinding.FragmentEditMovieBinding;
 
 /**

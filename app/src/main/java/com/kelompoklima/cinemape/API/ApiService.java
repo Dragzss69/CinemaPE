@@ -1,10 +1,11 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.API;
 
 import com.github.kittinunf.fuel.Fuel;
 import com.github.kittinunf.fuel.core.FuelError;
 import com.github.kittinunf.fuel.core.Handler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kelompoklima.cinemape.Model.Movie;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

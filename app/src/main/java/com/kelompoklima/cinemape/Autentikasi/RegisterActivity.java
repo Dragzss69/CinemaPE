@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Autentikasi;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -6,6 +6,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.kelompoklima.cinemape.R;
+import com.kelompoklima.cinemape.Session.SessionManager;
 
 /**
  * RegisterActivity menangani proses pendaftaran pengguna baru.

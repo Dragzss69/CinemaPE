@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Model;
 
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;

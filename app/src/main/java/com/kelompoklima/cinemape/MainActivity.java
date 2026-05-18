@@ -6,6 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.kelompoklima.cinemape.Autentikasi.LoginActivity;
+import com.kelompoklima.cinemape.Movie.AddMovieFragment;
+import com.kelompoklima.cinemape.Movie.HomeFragment;
+import com.kelompoklima.cinemape.Movie.SavedFragment;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.ActivityMainBinding;
 
 /**

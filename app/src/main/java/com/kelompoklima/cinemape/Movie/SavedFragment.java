@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Movie;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.kelompoklima.cinemape.Model.Movie;
+import com.kelompoklima.cinemape.R;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.FragmentSavedBinding;
 import java.util.ArrayList;
 import java.util.List;

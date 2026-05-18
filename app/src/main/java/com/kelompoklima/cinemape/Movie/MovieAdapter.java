@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape;
+package com.kelompoklima.cinemape.Movie;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.kelompoklima.cinemape.Model.Movie;
+import com.kelompoklima.cinemape.R;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
