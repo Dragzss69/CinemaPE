@@ -61,9 +61,13 @@ public class DetailMovieFragment extends Fragment {
             binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
-        // Tombol Watch Trailer - Diarahkan ke link statis sesuai permintaan
+        // Tombol Watch Trailer - Mengambil link dari data movie
         binding.btnWatchTrailer.setOnClickListener(v -> {
-            String trailerUrl = "https://share.google/lKbJO7YsTYEf93481";
+            String trailerUrl = movie.getUrlTrailer();
+            if (trailerUrl == null || trailerUrl.isEmpty()) {
+                Toast.makeText(getContext(), "Trailer tidak tersedia", Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
                 startActivity(intent);
