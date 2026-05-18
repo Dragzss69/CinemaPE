@@ -3,8 +3,13 @@ package com.kelompoklima.cinemape;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
+/**
+ * Model class untuk data Film (Movie).
+ * Mengimplementasikan Serializable agar objek bisa dikirim antar Fragment/Activity.
+ */
 public class Movie implements Serializable {
 
+    // SerializedName mencocokkan nama field di JSON MockAPI dengan variabel Java
     @SerializedName("id")
     private String id;
 
@@ -27,34 +32,44 @@ public class Movie implements Serializable {
     private String kategori;
 
     @SerializedName("userId")
-    private String userId;
+    private String userId; // ID User yang membuat/memiliki data film ini
 
     @SerializedName("url_trailer")
     private String urlTrailer;
 
+    // Konstruktor kosong diperlukan oleh library GSON
     public Movie() {
     }
 
+    // Konstruktor untuk inisialisasi cepat
     public Movie(String judul, String ringkasan) {
         this.judul = judul;
         this.ringkasan = ringkasan;
     }
 
-    // --- Getter dan Setter ---
+    // --- Getter dan Setter: Digunakan untuk mengambil dan mengubah data field ---
+    
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+    
     public String getJudul() { return judul; }
     public void setJudul(String judul) { this.judul = judul; }
+    
     public String getRingkasan() { return ringkasan; }
     public void setRingkasan(String ringkasan) { this.ringkasan = ringkasan; }
+    
     public String getGambarPoster() { return gambarPoster; }
     public void setGambarPoster(String gambarPoster) { this.gambarPoster = gambarPoster; }
+    
     public long getTanggalRilis() { return tanggalRilis; }
     public void setTanggalRilis(long tanggalRilis) { this.tanggalRilis = tanggalRilis; }
+    
     public String getSkorRating() { return skorRating; }
     public void setSkorRating(String skorRating) { this.skorRating = skorRating; }
+    
     public String getKategori() { return kategori; }
     public void setKategori(String kategori) { this.kategori = kategori; }
+
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 

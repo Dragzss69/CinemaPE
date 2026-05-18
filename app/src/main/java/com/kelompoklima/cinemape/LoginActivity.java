@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
- * LoginActivity menangani proses masuk pengguna ke aplikasi.
+ * LoginActivity mengelola proses autentikasi masuk pengguna.
+ * Mengecek kecocokan input dengan data yang tersimpan di SharedPreferences melalui SessionManager.
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -23,48 +24,48 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inisialisasi SessionManager untuk mengecek status login
+        // Inisialisasi SessionManager untuk mengelola status login
         sessionManager = new SessionManager(this);
 
-        // Jika user sudah login sebelumnya, langsung arahkan ke halaman utama (MainActivity)
+        // Cek Sesi: Jika user sudah login, langsung arahkan ke MainActivity
         if (sessionManager.isLoggedIn()) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish(); // Tutup LoginActivity agar tidak bisa di-back
+            finish(); // Tutup LoginActivity
         }
 
-        // Menghubungkan variabel dengan elemen UI yang ada di layout XML
+        // Inisialisasi komponen UI dari layout XML
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvToRegister = findViewById(R.id.tvToRegister);
 
-        // Aksi ketika tombol Login diklik
+        // Logika saat tombol Login diklik
         btnLogin.setOnClickListener(v -> {
             String username = edtUsername.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
 
-            // Validasi: memastikan input tidak kosong
+            // Validasi: Pastikan input tidak kosong
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Username dan password harus diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Memeriksa apakah username dan password cocok dengan data yang tersimpan di HP
+            // Verifikasi Login melalui SessionManager
             if (sessionManager.checkLogin(username, password)) {
-                // Jika sukses: simpan status login ke dalam sesi
+                // Jika Berhasil: Buat sesi login dan simpan username
                 sessionManager.createLoginSession(username);
                 Toast.makeText(this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
                 
-                // Pindah ke halaman utama (MainActivity)
+                // Pindah ke halaman utama
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish(); // Agar user tidak bisa kembali ke halaman login dengan tombol back
+                finish();
             } else {
-                // Jika gagal: beritahu user bahwa data salah
+                // Jika Gagal: Tampilkan pesan error
                 Toast.makeText(this, "Username atau password salah", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Berpindah ke halaman pendaftaran (RegisterActivity)
+        // Navigasi ke halaman pendaftaran (RegisterActivity)
         tvToRegister.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });

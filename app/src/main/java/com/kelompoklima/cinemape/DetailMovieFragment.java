@@ -18,12 +18,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * DetailMovieFragment menampilkan rincian lengkap dari sebuah film.
+ * Menyediakan opsi untuk menonton trailer, serta mengedit atau menghapus film.
+ */
 public class DetailMovieFragment extends Fragment {
 
-    private FragmentDetailMovieBinding binding;
-    private Movie movie;
+    private FragmentDetailMovieBinding binding; // Akses komponen UI
+    private Movie movie; // Objek film yang akan ditampilkan detailnya
     private SessionManager sessionManager;
 
+    /**
+     * Metode untuk membuat instance baru dengan mengirimkan data Movie.
+     */
     public static DetailMovieFragment newInstance(Movie movie) {
         DetailMovieFragment fragment = new DetailMovieFragment();
         Bundle args = new Bundle();
@@ -35,6 +42,7 @@ public class DetailMovieFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Mengambil data movie dari argumen
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable("movie");
         }
@@ -55,13 +63,13 @@ public class DetailMovieFragment extends Fragment {
         setupToolbar();
 
         if (movie != null) {
-            displayMovieDetails();
+            displayMovieDetails(); // Menampilkan data ke UI
             
-            // Tampilkan tombol Edit & Hapus (CRUD)
+            // Menampilkan aksi (Edit/Hapus)
             binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
-        // Tombol Watch Trailer - Mengambil link dari data movie
+        // Tombol Watch Trailer: Membuka browser atau YouTube aplikasi dengan URL trailer
         binding.btnWatchTrailer.setOnClickListener(v -> {
             String trailerUrl = movie.getUrlTrailer();
             if (trailerUrl == null || trailerUrl.isEmpty()) {
@@ -76,7 +84,7 @@ public class DetailMovieFragment extends Fragment {
             }
         });
 
-        // Tombol Edit
+        // Tombol Edit: Pindah ke EditMovieFragment
         binding.btnEditMovie.setOnClickListener(v -> {
             EditMovieFragment editFragment = EditMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -85,10 +93,13 @@ public class DetailMovieFragment extends Fragment {
                     .commit();
         });
 
-        // Tombol Hapus
+        // Tombol Hapus: Menampilkan konfirmasi sebelum menghapus
         binding.btnDeleteMovie.setOnClickListener(v -> showDeleteConfirmation());
     }
 
+    /**
+     * Mengatur tombol kembali pada toolbar fragment.
+     */
     private void setupToolbar() {
         binding.toolbar.setNavigationOnClickListener(v -> {
             if (getParentFragmentManager() != null) {
@@ -97,6 +108,9 @@ public class DetailMovieFragment extends Fragment {
         });
     }
 
+    /**
+     * Menampilkan dialog konfirmasi untuk mencegah ketidaksengajaan penghapusan.
+     */
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Movie")
@@ -106,12 +120,16 @@ public class DetailMovieFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Memanggil API untuk menghapus data film di server.
+     */
     private void deleteMovie() {
         ApiService.deleteMovie(movie.getId(), new ApiService.ApiCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 if (isAdded()) {
                     Toast.makeText(getContext(), "Movie berhasil dihapus!", Toast.LENGTH_SHORT).show();
+                    // Kembali ke halaman sebelumnya setelah berhasil hapus
                     getParentFragmentManager().popBackStack();
                 }
             }
@@ -125,6 +143,9 @@ public class DetailMovieFragment extends Fragment {
         });
     }
 
+    /**
+     * Memasukkan data dari objek Movie ke komponen UI di layar.
+     */
     private void displayMovieDetails() {
         binding.tvDetailTitle.setText(movie.getJudul());
         binding.chipCategory.setText(movie.getKategori());
@@ -132,14 +153,15 @@ public class DetailMovieFragment extends Fragment {
         binding.tvDetailDescription.setText(movie.getRingkasan());
         binding.tvDetailMovieId.setText("#" + movie.getId());
 
+        // Mengolah data tanggal rilis
         if (movie.getTanggalRilis() > 0) {
             Date date = new Date(movie.getTanggalRilis() * 1000L);
             
-            // Full Date untuk info section
+            // Format tanggal lengkap
             SimpleDateFormat fullSdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
             binding.tvDetailFullDate.setText(fullSdf.format(date));
 
-            // Year untuk stats row
+            // Mendapatkan tahun saja
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             binding.tvDetailReleaseYear.setText(String.valueOf(calendar.get(Calendar.YEAR)));
@@ -148,6 +170,7 @@ public class DetailMovieFragment extends Fragment {
             binding.tvDetailReleaseYear.setText("-");
         }
 
+        // Memuat gambar poster
         Glide.with(this)
                 .load(movie.getGambarPoster())
                 .placeholder(R.color.black_card_dark)
