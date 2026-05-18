@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.kelompoklima.cinemape.Model.Movie;
 import com.kelompoklima.cinemape.CRUD.DeleteMovieFragment;
 import com.kelompoklima.cinemape.CRUD.EditMovieFragment;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.R;
 import com.kelompoklima.cinemape.databinding.FragmentDetailMovieBinding;
 import java.text.SimpleDateFormat;
@@ -21,15 +22,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * DetailMovieFragment murni untuk menampilkan informasi rincian film.
- * Logika Update dialihkan ke EditMovieFragment.
- * Logika Delete dialihkan ke DeleteMovieFragment.
- */
 public class DetailMovieFragment extends Fragment {
 
     private FragmentDetailMovieBinding binding;
     private Movie movie;
+    private SessionManager sessionManager;
 
     public static DetailMovieFragment newInstance(Movie movie) {
         DetailMovieFragment fragment = new DetailMovieFragment();
@@ -45,6 +42,7 @@ public class DetailMovieFragment extends Fragment {
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable("movie");
         }
+        sessionManager = new SessionManager(requireContext());
     }
 
     @Nullable
@@ -62,17 +60,18 @@ public class DetailMovieFragment extends Fragment {
 
         if (movie != null) {
             displayMovieDetails();
-            // Menampilkan tombol aksi (Edit & Hapus)
-            binding.layoutOwnerActions.setVisibility(View.VISIBLE);
+            
+            // Check ownership to show Edit/Delete
+            String currentUsername = sessionManager.getUsername();
+            if (currentUsername != null && currentUsername.equals(movie.getUserId())) {
+                binding.layoutOwnerActions.setVisibility(View.VISIBLE);
+            }
         }
 
-        // Aksi Tonton Trailer
+        // Interaction Handlers
+
         binding.btnWatchTrailer.setOnClickListener(v -> {
-            String trailerUrl = movie.getUrlTrailer();
-            if (trailerUrl == null || trailerUrl.isEmpty()) {
-                Toast.makeText(getContext(), "Trailer tidak tersedia", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            String trailerUrl = "https://share.google/lKbJO7YsTYEf93481";
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
                 startActivity(intent);
@@ -81,7 +80,20 @@ public class DetailMovieFragment extends Fragment {
             }
         });
 
-        // Aksi Navigasi ke Halaman Edit
+        binding.btnFavorite.setOnClickListener(v -> {
+            boolean isSaved = sessionManager.toggleMovieLocally(movie);
+            Toast.makeText(getContext(), isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit", Toast.LENGTH_SHORT).show();
+            updateFavoriteIcon();
+        });
+
+        binding.btnShare.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            String shareMessage = "Check out this movie: " + movie.getJudul() + "\nTrailer: https://share.google/lKbJO7YsTYEf93481";
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            startActivity(Intent.createChooser(shareIntent, "Share movie via"));
+        });
+
         binding.btnEditMovie.setOnClickListener(v -> {
             EditMovieFragment editFragment = EditMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -90,7 +102,6 @@ public class DetailMovieFragment extends Fragment {
                     .commit();
         });
 
-        // Aksi Navigasi ke Halaman Delete
         binding.btnDeleteMovie.setOnClickListener(v -> {
             DeleteMovieFragment deleteFragment = DeleteMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -98,6 +109,8 @@ public class DetailMovieFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
+
+        updateFavoriteIcon();
     }
 
     private void setupToolbar() {
@@ -106,6 +119,19 @@ public class DetailMovieFragment extends Fragment {
                 getParentFragmentManager().popBackStack();
             }
         });
+    }
+
+    private void updateFavoriteIcon() {
+        if (movie != null && sessionManager != null) {
+            boolean isSaved = false;
+            for (Movie m : sessionManager.getSavedMoviesLocally()) {
+                if (m.getId() != null && m.getId().equals(movie.getId())) {
+                    isSaved = true;
+                    break;
+                }
+            }
+            binding.btnFavorite.setIconResource(isSaved ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+        }
     }
 
     private void displayMovieDetails() {
