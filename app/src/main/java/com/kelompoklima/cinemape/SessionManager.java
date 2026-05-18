@@ -22,8 +22,8 @@ public class SessionManager {
     private static final String KEY_REGISTERED_USERNAME = "reg_username";
     private static final String KEY_REGISTERED_PASS = "reg_pass";
     
-    // Key untuk menyimpan daftar film favorit dalam bentuk JSON
-    private static final String KEY_SAVED_MOVIES = "saved_movies_list";
+    // Key dasar untuk favorit
+    private static final String KEY_SAVED_MOVIES_BASE = "saved_movies_";
 
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -64,13 +64,21 @@ public class SessionManager {
         editor.apply();
     }
 
-    // --- FITUR SIMPAN FAVORIT (LOKAL) ---
+    // --- FITUR SIMPAN FAVORIT (LOKAL & UNIK PER USER) ---
 
     /**
-     * Mengambil daftar film yang disimpan dari SharedPreferences.
+     * Mendapatkan key SharedPreferences yang unik untuk user yang sedang login.
+     */
+    private String getSavedMoviesKey() {
+        String username = getUsername();
+        return (username != null) ? KEY_SAVED_MOVIES_BASE + username : "saved_movies_guest";
+    }
+
+    /**
+     * Mengambil daftar film yang disimpan dari SharedPreferences (Spesifik per User).
      */
     public List<Movie> getSavedMoviesLocally() {
-        String json = sharedPreferences.getString(KEY_SAVED_MOVIES, null);
+        String json = sharedPreferences.getString(getSavedMoviesKey(), null);
         if (json == null) {
             return new ArrayList<>();
         }
@@ -79,7 +87,7 @@ public class SessionManager {
     }
 
     /**
-     * Menyimpan atau Menghapus film dari daftar favorit (Toggle).
+     * Menyimpan atau Menghapus film dari daftar favorit user (Toggle).
      * @return true jika film akhirnya tersimpan, false jika dihapus.
      */
     public boolean toggleMovieLocally(Movie movie) {
@@ -87,7 +95,6 @@ public class SessionManager {
         boolean isAlreadySaved = false;
         int indexToRemove = -1;
 
-        // Cek apakah film sudah ada di list berdasarkan ID
         for (int i = 0; i < savedMovies.size(); i++) {
             if (savedMovies.get(i).getId().equals(movie.getId())) {
                 isAlreadySaved = true;
@@ -97,16 +104,13 @@ public class SessionManager {
         }
 
         if (isAlreadySaved) {
-            // Jika sudah ada, hapus dari favorit
             savedMovies.remove(indexToRemove);
         } else {
-            // Jika belum ada, tambahkan ke favorit
             savedMovies.add(movie);
         }
 
-        // Simpan kembali list yang sudah diupdate ke SharedPreferences
         String json = gson.toJson(savedMovies);
-        editor.putString(KEY_SAVED_MOVIES, json);
+        editor.putString(getSavedMoviesKey(), json);
         editor.apply();
 
         return !isAlreadySaved;
