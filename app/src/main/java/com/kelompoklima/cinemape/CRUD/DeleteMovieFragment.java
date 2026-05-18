@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import com.kelompoklima.cinemape.API.ApiService;
 import com.kelompoklima.cinemape.Model.Movie;
 import com.kelompoklima.cinemape.R;
+import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.UI.HomeFragment;
 import com.kelompoklima.cinemape.databinding.FragmentDeleteMovieBinding;
 
@@ -22,6 +23,7 @@ public class DeleteMovieFragment extends Fragment {
 
     private FragmentDeleteMovieBinding binding;
     private Movie movie;
+    private SessionManager sessionManager;
 
     public static DeleteMovieFragment newInstance(Movie movie) {
         DeleteMovieFragment fragment = new DeleteMovieFragment();
@@ -50,6 +52,8 @@ public class DeleteMovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sessionManager = new SessionManager(requireContext());
+
         if (movie != null) {
             binding.tvConfirmMessage.setText("Apakah Anda yakin ingin menghapus movie '" + movie.getJudul() + "' secara permanen?");
         }
@@ -68,6 +72,9 @@ public class DeleteMovieFragment extends Fragment {
             @Override
             public void onSuccess(Void result) {
                 if (isAdded()) {
+                    // Hapus juga dari favorit lokal agar tidak muncul di tab Saved
+                    sessionManager.removeMovieLocally(movie.getId());
+
                     Toast.makeText(getContext(), "Movie berhasil dihapus!", Toast.LENGTH_SHORT).show();
                     
                     // Kembali ke Home (Membersihkan backstack detail dan delete)

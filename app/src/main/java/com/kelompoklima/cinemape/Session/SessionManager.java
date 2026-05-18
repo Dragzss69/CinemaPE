@@ -164,4 +164,24 @@ public class SessionManager {
             editor.apply();
         }
     }
+
+    /**
+     * Menghapus film dari list favorit lokal berdasarkan ID.
+     */
+    public void removeMovieLocally(String movieId) {
+        List<Movie> savedMovies = getSavedMoviesLocally();
+        boolean found = false;
+        for (int i = 0; i < savedMovies.size(); i++) {
+            if (savedMovies.get(i).getId().equals(movieId)) {
+                savedMovies.remove(i);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            String json = gson.toJson(savedMovies);
+            editor.putString(getSavedMoviesKey(), json);
+            editor.apply();
+        }
+    }
 }
