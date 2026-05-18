@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape.Movie;
+package com.kelompoklima.cinemape.CRUD;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

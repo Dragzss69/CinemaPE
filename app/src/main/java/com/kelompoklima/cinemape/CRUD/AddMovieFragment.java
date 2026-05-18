@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape.Movie;
+package com.kelompoklima.cinemape.CRUD;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +14,8 @@ import com.kelompoklima.cinemape.API.ApiService;
 import com.kelompoklima.cinemape.Model.Movie;
 import com.kelompoklima.cinemape.R;
 import com.kelompoklima.cinemape.Session.SessionManager;
+import com.kelompoklima.cinemape.UI.DetailMovieFragment;
+import com.kelompoklima.cinemape.UI.MovieAdapter;
 import com.kelompoklima.cinemape.databinding.FragmentAddMovieBinding;
 import java.util.ArrayList;
 import java.util.List;

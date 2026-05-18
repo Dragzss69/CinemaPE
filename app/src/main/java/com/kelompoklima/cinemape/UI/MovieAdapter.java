@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape.Movie;
+package com.kelompoklima.cinemape.UI;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;

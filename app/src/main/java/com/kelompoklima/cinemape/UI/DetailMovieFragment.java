@@ -1,4 +1,4 @@
-package com.kelompoklima.cinemape.Movie;
+package com.kelompoklima.cinemape.UI;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,26 +9,27 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
-import com.kelompoklima.cinemape.API.ApiService;
 import com.kelompoklima.cinemape.Model.Movie;
+import com.kelompoklima.cinemape.CRUD.DeleteMovieFragment;
+import com.kelompoklima.cinemape.CRUD.EditMovieFragment;
 import com.kelompoklima.cinemape.R;
-import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.FragmentDetailMovieBinding;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-
+/**
+ * DetailMovieFragment murni untuk menampilkan informasi rincian film.
+ * Logika Update dialihkan ke EditMovieFragment.
+ * Logika Delete dialihkan ke DeleteMovieFragment.
+ */
 public class DetailMovieFragment extends Fragment {
 
     private FragmentDetailMovieBinding binding;
     private Movie movie;
-    private SessionManager sessionManager;
-
 
     public static DetailMovieFragment newInstance(Movie movie) {
         DetailMovieFragment fragment = new DetailMovieFragment();
@@ -44,7 +45,6 @@ public class DetailMovieFragment extends Fragment {
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable("movie");
         }
-        sessionManager = new SessionManager(requireContext());
     }
 
     @Nullable
@@ -62,10 +62,11 @@ public class DetailMovieFragment extends Fragment {
 
         if (movie != null) {
             displayMovieDetails();
-
+            // Menampilkan tombol aksi (Edit & Hapus)
             binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
+        // Aksi Tonton Trailer
         binding.btnWatchTrailer.setOnClickListener(v -> {
             String trailerUrl = movie.getUrlTrailer();
             if (trailerUrl == null || trailerUrl.isEmpty()) {
@@ -80,6 +81,7 @@ public class DetailMovieFragment extends Fragment {
             }
         });
 
+        // Aksi Navigasi ke Halaman Edit
         binding.btnEditMovie.setOnClickListener(v -> {
             EditMovieFragment editFragment = EditMovieFragment.newInstance(movie);
             getParentFragmentManager().beginTransaction()
@@ -88,41 +90,20 @@ public class DetailMovieFragment extends Fragment {
                     .commit();
         });
 
-        binding.btnDeleteMovie.setOnClickListener(v -> showDeleteConfirmation());
+        // Aksi Navigasi ke Halaman Delete
+        binding.btnDeleteMovie.setOnClickListener(v -> {
+            DeleteMovieFragment deleteFragment = DeleteMovieFragment.newInstance(movie);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, deleteFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
     private void setupToolbar() {
         binding.toolbar.setNavigationOnClickListener(v -> {
             if (getParentFragmentManager() != null) {
                 getParentFragmentManager().popBackStack();
-            }
-        });
-    }
-
-    private void showDeleteConfirmation() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Movie")
-                .setMessage("Apakah Anda yakin ingin menghapus movie ini?")
-                .setPositiveButton("Hapus", (dialog, which) -> deleteMovie())
-                .setNegativeButton("Batal", null)
-                .show();
-    }
-
-    private void deleteMovie() {
-        ApiService.deleteMovie(movie.getId(), new ApiService.ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                if (isAdded()) {
-                    Toast.makeText(getContext(), "Movie berhasil dihapus!", Toast.LENGTH_SHORT).show();
-                    getParentFragmentManager().popBackStack();
-                }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                if (isAdded()) {
-                    Toast.makeText(getContext(), "Gagal menghapus: " + errorMessage, Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }
@@ -138,16 +119,12 @@ public class DetailMovieFragment extends Fragment {
             long timestamp = Long.parseLong(movie.getTanggalRilis());
             if (timestamp > 0) {
                 Date date = new Date(timestamp * 1000L);
-
                 SimpleDateFormat fullSdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
                 binding.tvDetailFullDate.setText(fullSdf.format(date));
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 binding.tvDetailReleaseYear.setText(String.valueOf(calendar.get(Calendar.YEAR)));
-            } else {
-                binding.tvDetailFullDate.setText("-");
-                binding.tvDetailReleaseYear.setText("-");
             }
         } catch (Exception e) {
             binding.tvDetailFullDate.setText("-");
