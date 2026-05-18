@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,14 +62,18 @@ public class DetailMovieFragment extends Fragment {
         if (movie != null) {
             displayMovieDetails();
             
-            // Check ownership to show Edit/Delete
-            String currentUsername = sessionManager.getUsername();
-            if (currentUsername != null && currentUsername.equals(movie.getUserId())) {
-                binding.layoutOwnerActions.setVisibility(View.VISIBLE);
-            }
+            // Tampilkan tombol CRUD (Edit & Delete) sesuai permintaan
+            binding.layoutOwnerActions.setVisibility(View.VISIBLE);
         }
 
-        // Interaction Handlers
+        // Logika Rating Bar (10 Bintang)
+        binding.ratingBarUser.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                Toast.makeText(getContext(), "Rating: " + (int)rating + " bintang", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Interaksi Tombol
 
         binding.btnWatchTrailer.setOnClickListener(v -> {
             String trailerUrl = "https://share.google/lKbJO7YsTYEf93481";
@@ -82,16 +87,17 @@ public class DetailMovieFragment extends Fragment {
 
         binding.btnFavorite.setOnClickListener(v -> {
             boolean isSaved = sessionManager.toggleMovieLocally(movie);
-            Toast.makeText(getContext(), isSaved ? "Berhasil simpan ke favorit" : "Dihapus dari favorit", Toast.LENGTH_SHORT).show();
+            String msg = isSaved ? "Ditambahkan ke favorit" : "Dihapus dari favorit";
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
             updateFavoriteIcon();
         });
 
         binding.btnShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            String shareMessage = "Check out this movie: " + movie.getJudul() + "\nTrailer: https://share.google/lKbJO7YsTYEf93481";
+            String shareMessage = "Lihat film ini: " + movie.getJudul() + "\nTrailer: https://share.google/lKbJO7YsTYEf93481";
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-            startActivity(Intent.createChooser(shareIntent, "Share movie via"));
+            startActivity(Intent.createChooser(shareIntent, "Bagikan film melalui"));
         });
 
         binding.btnEditMovie.setOnClickListener(v -> {
@@ -130,7 +136,8 @@ public class DetailMovieFragment extends Fragment {
                     break;
                 }
             }
-            binding.btnFavorite.setIconResource(isSaved ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+            // Menggunakan ikon bintang outline jika belum favorit, dan filled jika sudah favorit
+            binding.btnFavorite.setIconResource(isSaved ? R.drawable.ic_star_filled : R.drawable.ic_star_outline);
         }
     }
 
