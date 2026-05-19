@@ -76,7 +76,11 @@ public class DetailMovieFragment extends Fragment {
         // Interaksi Tombol
 
         binding.btnWatchTrailer.setOnClickListener(v -> {
-            String trailerUrl = "https://share.google/lKbJO7YsTYEf93481";
+            String trailerUrl = movie.getUrlTrailer();
+            if (trailerUrl == null || trailerUrl.isEmpty()) {
+                Toast.makeText(getContext(), "Trailer tidak tersedia untuk film ini", Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
                 startActivity(intent);
@@ -95,7 +99,9 @@ public class DetailMovieFragment extends Fragment {
         binding.btnShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            String shareMessage = "Lihat film ini: " + movie.getJudul() + "\nTrailer: https://share.google/lKbJO7YsTYEf93481";
+            String trailerUrl = (movie.getUrlTrailer() != null && !movie.getUrlTrailer().isEmpty()) 
+                    ? movie.getUrlTrailer() : "Trailer tidak tersedia";
+            String shareMessage = "Lihat film ini: " + movie.getJudul() + "\nTrailer: " + trailerUrl;
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
             startActivity(Intent.createChooser(shareIntent, "Bagikan film melalui"));
         });
