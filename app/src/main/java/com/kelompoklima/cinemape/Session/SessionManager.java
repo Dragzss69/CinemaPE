@@ -10,10 +10,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * SessionManager mengelola data sesi login dan penyimpanan film favorit secara lokal.
- * Menggunakan SharedPreferences untuk menyimpan data dalam bentuk key-value.
- */
 public class SessionManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -22,7 +18,7 @@ public class SessionManager {
     // Nama file SharedPreferences
     private static final String PREF_NAME = "CinemaPE_Session";
     
-    // Key-key yang digunakan untuk menyimpan data
+    // Key-key yang digunakan untuk menyimpan data pengguna
     private static final String IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_LOGGED_IN_USERNAME = "loggedInUsername";
     private static final String KEY_REGISTERED_USERNAME = "reg_username";
@@ -40,27 +36,21 @@ public class SessionManager {
 
     // --- BAGIAN AUTENTIKASI ---
 
-    /**
-     * Mendaftarkan user baru (Simpan username & password ke SP).
-     */
+    // Mendaftarkan user baru (Simpan username & password ke SP).
     public void registerUser(String username, String password) {
         editor.putString(KEY_REGISTERED_USERNAME, username);
         editor.putString(KEY_REGISTERED_PASS, password);
         editor.apply(); // Simpan secara asynchronous
     }
 
-    /**
-     * Mengecek apakah input login sesuai dengan data yang terdaftar.
-     */
+    // Mengecek apakah input login sesuai dengan data yang terdaftar.
     public boolean checkLogin(String username, String password) {
         String regUser = sharedPreferences.getString(KEY_REGISTERED_USERNAME, "");
         String regPass = sharedPreferences.getString(KEY_REGISTERED_PASS, "");
         return username.equals(regUser) && password.equals(regPass);
     }
 
-    /**
-     * Membuat sesi login setelah berhasil masuk.
-     */
+    // Membuat sesi login setelah berhasil masuk.
     public void createLoginSession(String username) {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(KEY_LOGGED_IN_USERNAME, username);
@@ -81,9 +71,7 @@ public class SessionManager {
         return sharedPreferences.getString(KEY_LOGGED_IN_USERNAME, null);
     }
 
-    /**
-     * Menghapus sesi login (Logout).
-     */
+    // Menghapus sesi login (Logout).
     public void logout() {
         editor.putBoolean(IS_LOGGED_IN, false);
         editor.putString(KEY_LOGGED_IN_USERNAME, null);
@@ -92,9 +80,7 @@ public class SessionManager {
 
     // --- BAGIAN FAVORIT (UNIK PER USER) ---
 
-    /**
-     * Menghasilkan key unik untuk favorit berdasarkan username (contoh: saved_movies_budi).
-     */
+    // Menghasilkan key unik untuk favorit berdasarkan username (contoh: saved_movies_budi).
     private String getSavedMoviesKey() {
         String username = getUsername();
         return (username != null) ? KEY_SAVED_MOVIES_BASE + username : "saved_movies_guest";
@@ -145,9 +131,7 @@ public class SessionManager {
         return !isAlreadySaved; // Mengembalikan true jika akhirnya disimpan
     }
 
-    /**
-     * Memperbarui data film di list favorit lokal jika film tersebut ada.
-     */
+    // Memperbarui data film di list favorit lokal jika film tersebut ada.
     public void updateMovieLocally(Movie updatedMovie) {
         List<Movie> savedMovies = getSavedMoviesLocally();
         boolean found = false;
@@ -165,9 +149,7 @@ public class SessionManager {
         }
     }
 
-    /**
-     * Menghapus film dari list favorit lokal berdasarkan ID.
-     */
+    // Menghapus film dari list favorit lokal berdasarkan ID.
     public void removeMovieLocally(String movieId) {
         List<Movie> savedMovies = getSavedMoviesLocally();
         boolean found = false;
