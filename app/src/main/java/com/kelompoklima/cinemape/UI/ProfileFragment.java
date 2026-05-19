@@ -15,7 +15,7 @@ import com.kelompoklima.cinemape.R;
 import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.LayoutProfileDialogBinding;
 
-public class ProfileDialogFragment extends DialogFragment {
+public class ProfileFragment extends DialogFragment {
 
     private LayoutProfileDialogBinding binding;
     private SessionManager sessionManager;

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.kelompoklima.cinemape.Autentikasi.LoginActivity;
 import com.kelompoklima.cinemape.CRUD.AddMovieFragment;
 import com.kelompoklima.cinemape.UI.HomeFragment;
-import com.kelompoklima.cinemape.UI.ProfileDialogFragment;
+import com.kelompoklima.cinemape.UI.ProfileFragment;
 import com.kelompoklima.cinemape.UI.SavedFragment;
 import com.kelompoklima.cinemape.Session.SessionManager;
 import com.kelompoklima.cinemape.databinding.ActivityMainBinding;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_profile) {
-            new ProfileDialogFragment().show(getSupportFragmentManager(), "ProfileDialog");
+            new ProfileFragment().show(getSupportFragmentManager(), "ProfileDialog");
             return true;
         }
         return super.onOptionsItemSelected(item);
