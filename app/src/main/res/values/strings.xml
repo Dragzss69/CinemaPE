@@ -6,6 +6,7 @@
     <string name="login_title">Login CinemaPE</string>
     <string name="register_title">Daftar Akun Baru</string>
     <string name="hint_email">Email</string>
+    <string name="hint_phone">Phone</string>
     <string name="hint_password">Password</string>
     <string name="hint_username">Username</string>
     <string name="btn_login">Masuk</string>
