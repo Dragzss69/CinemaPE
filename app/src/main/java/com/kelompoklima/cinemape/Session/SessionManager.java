@@ -14,16 +14,16 @@ public class SessionManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Gson gson;
-    
+
     // Nama file SharedPreferences
     private static final String PREF_NAME = "CinemaPE_Session";
-    
+
     // Key-key yang digunakan untuk menyimpan data pengguna
     private static final String IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_LOGGED_IN_USERNAME = "loggedInUsername";
     private static final String KEY_REGISTERED_USERNAME = "reg_username";
     private static final String KEY_REGISTERED_PASS = "reg_pass";
-    
+
     // Key dasar untuk list favorit, nantinya digabung dengan username agar unik
     private static final String KEY_SAVED_MOVIES_BASE = "saved_movies_";
 
